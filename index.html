@@ -1179,18 +1179,19 @@ function unlockQuiz(clsId, sid, name, btn){
     if(logEl) logEl.innerHTML = buildEditLog(CLASSES[ci]);
   }
 
-  // หา quiz URL จาก localStorage (ถ้าเก็บไว้) หรือสร้าง URL สำหรับส่งนักเรียนกลับ
-  // หน้าแบบทดสอบ: เปิด quiz URL พร้อม param ที่บอกให้ reset สำหรับนักเรียนคนนั้น
+  // ส่งสัญญาณปลดล็อกผ่าน localStorage → quiz.html ที่นักเรียนเปิดอยู่จะรับและรีเซ็ตทันที
   const stu = CLASSES.find(c=>c.id===clsId)?.students.find(s=>s.id===sid);
-  const quizBase = localStorage.getItem('quiz_url') || '';
-  if(quizBase){
-    const quizUrl = quizBase + `?unlock=1&class=ม.${clsId}&num=${stu?.no||''}&name=${encodeURIComponent(name)}&id=${sid}`;
-    showAutoToast(`✅ ยกเลิกคะแนน ${name} (${oldScore}/2.5) เรียบร้อย — กำลังเปิดแบบทดสอบ...`, '#15803d');
-    setTimeout(()=>{ window.open(quizUrl,'_blank'); }, 1200);
-  } else {
-    showAutoToast(`✅ ยกเลิกคะแนน ${name} (${oldScore}/2.5) เรียบร้อย — นักเรียนสามารถทำแบบทดสอบใหม่ได้`, '#15803d');
-  }
+  const unlockPayload = JSON.stringify({
+    cls:  'ม.' + clsId,
+    num:  String(stu?.no || ''),
+    sid:  sid,
+    ts:   Date.now()
+  });
+  localStorage.setItem('quiz_unlock', unlockPayload);
+  // ลบ signal ออกหลัง 15 วิ เพื่อไม่ให้ค้าง
+  setTimeout(()=>{ localStorage.removeItem('quiz_unlock'); }, 15000);
 
+  showAutoToast('🔓 ยกเลิกคะแนน ' + name + ' (' + oldScore + '/2.5) เรียบร้อย — หน้าแบบทดสอบจะรีเซ็ตอัตโนมัติ', '#15803d');
   updateSummaryTab();
 }
 
@@ -1557,14 +1558,6 @@ function updateSummaryTab(){
   const scaled = parseFloat(p.get('scaled'));
   const name   = p.get('name');
   const pct    = p.get('pct');
-
-  // บันทึก quiz URL (referrer) ไว้เพื่อใช้ปลดล็อก
-  if(document.referrer){
-    try {
-      const refUrl = new URL(document.referrer);
-      localStorage.setItem('quiz_url', refUrl.origin + refUrl.pathname);
-    } catch(e){}
-  }
 
   // แปลง cls → id ที่ตรงกับ CLASSES (ตัด "ม." ออก)
   const clsId  = cls.replace(/^ม\./, '');
