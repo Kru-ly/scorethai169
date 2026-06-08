@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบเช็กการส่งงาน ภาษาไทย ม.6 | แก่นนครวิทยาลัย</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #f5f6fa;
+  color: #1a1d2e;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+}
+
+/* ===== UNIT COLOR PALETTE ===== */
+/* U1 กาพย์เห่เรือ — teal */
+:root {
+  --u1-bg: #e1f5ee;    --u1-hd: #0f6e56;   --u1-th: #d0ede3;  --u1-border: #5dcaa5;
+  /* U2 ขุนช้างขุนแผน — blue */
+  --u2-bg: #e6f1fb;    --u2-hd: #185fa5;   --u2-th: #d0e4f7;  --u2-border: #378add;
+  /* midterm — amber */
+  --um-bg: #faeeda;    --um-hd: #854f0b;   --um-th: #f7e0b0;  --um-border: #ef9f27;
+  /* U3 การอ่านวิเคราะห์ — purple */
+  --u3-bg: #eeedfe;    --u3-hd: #3c3489;   --u3-th: #dddcf8;  --u3-border: #7f77dd;
+  /* U4 การใช้ภาษา — coral */
+  --u4-bg: #faece7;    --u4-hd: #993c1d;   --u4-th: #f5d8ce;  --u4-border: #d85a30;
+  /* final — green */
+  --uf-bg: #eaf3de;    --uf-hd: #3b6d11;   --uf-th: #d4e9b8;  --uf-border: #639922;
+
+  --white: #ffffff;
+  --gray50: #f5f6fa;
+  --gray100: #eef0f6;
+  --gray200: #dde0ec;
+  --gray400: #9aa0b8;
+  --gray600: #5a6077;
+  --gray800: #2d3148;
+  --text: #1a1d2e;
+  --shadow: 0 1px 4px #00000014;
+  --shadow-md: 0 2px 12px #00000018;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: #fff;
+  border-bottom: 2px solid var(--gray200);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: var(--shadow-md);
+}
+.header-logo {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--u2-hd);
+}
+.header-sub { color: var(--gray600); font-size: 12px; margin-top: 1px; }
+.header-spacer { flex: 1; }
+.sem-badge {
+  background: var(--u2-bg);
+  color: var(--u2-hd);
+  border: 1px solid var(--u2-border);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ===== COLOR LEGEND ===== */
+.legend {
+  background: #fff;
+  border-bottom: 1px solid var(--gray200);
+  padding: 8px 24px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.legend-label { font-size: 11px; color: var(--gray600); margin-right: 4px; }
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px 2px 6px;
+  border-radius: 4px;
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 10px 24px 0;
+  background: #fff;
+  border-bottom: 1px solid var(--gray200);
+  overflow-x: auto;
+  scrollbar-width: none;
+  box-shadow: var(--shadow);
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 8px 20px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--gray600);
+  border: 1px solid transparent;
+  border-bottom: none;
+  transition: all .15s;
+  white-space: nowrap;
+  background: var(--gray100);
+}
+.tab:hover { color: var(--u2-hd); background: var(--u2-bg); }
+.tab.active {
+  color: var(--u2-hd);
+  background: #fff;
+  border-color: var(--gray200);
+  border-bottom-color: #fff;
+  margin-bottom: -1px;
+}
+
+/* ===== PANEL ===== */
+.main { display: none; padding: 20px 24px 32px; }
+.main.active { display: block; }
+
+/* ===== TABLE CARD ===== */
+.table-card {
+  background: #fff;
+  border: 1px solid var(--gray200);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.table-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--gray200);
+  flex-wrap: wrap;
+  background: var(--gray50);
+}
+.table-title {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray800);
+  flex: 1;
+}
+.student-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray600);
+  background: var(--gray200);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.search-box {
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid var(--gray200);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  width: 170px;
+  outline: none;
+  transition: border-color .15s;
+}
+.search-box:focus { border-color: var(--u2-border); box-shadow: 0 0 0 2px #378add22; }
+.btn-export {
+  padding: 6px 14px;
+  background: #fff;
+  color: var(--gray600);
+  font-weight: 600;
+  border: 1px solid var(--gray200);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 12px;
+  transition: all .15s;
+}
+.btn-export:hover { border-color: var(--gray400); color: var(--gray800); background: var(--gray100); }
+.btn-save {
+  padding: 6px 16px;
+  background: var(--u2-hd);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  transition: opacity .15s;
+}
+.btn-save:hover { opacity: .85; }
+
+/* ===== STICKY COLUMNS ===== */
+.table-scroll { overflow-x: auto; position: relative; }
+table { border-collapse: separate; border-spacing: 0; }
+
+th.sticky-no, td.sticky-no,
+th.sticky-id, td.sticky-id,
+th.sticky-name, td.sticky-name {
+  position: sticky;
+  z-index: 3;
+  background: #fff;
+}
+th.sticky-no, td.sticky-no   { left: 0;   min-width: 36px; width: 36px; }
+th.sticky-id, td.sticky-id   { left: 36px; min-width: 62px; width: 62px; border-right: none; }
+th.sticky-name, td.sticky-name { left: 98px; min-width: 178px; border-right: 2px solid var(--gray300,#ccc) !important; }
+
+thead th.sticky-no, thead th.sticky-id { background: var(--gray800); z-index: 5; }
+thead th.sticky-name { background: var(--gray800); z-index: 5; }
+thead tr.sh th.sticky-name { background: var(--gray100); }
+thead tr.sh th.sticky-no, thead tr.sh th.sticky-id { background: var(--gray100); }
+
+tbody tr:nth-child(even) td.sticky-no,
+tbody tr:nth-child(even) td.sticky-id,
+tbody tr:nth-child(even) td.sticky-name { background: var(--gray50); }
+tbody tr:hover td.sticky-no,
+tbody tr:hover td.sticky-id,
+tbody tr:hover td.sticky-name { background: #f0f6ff; }
+
+/* shadow on sticky-name to indicate freeze */
+td.sticky-name, th.sticky-name {
+  box-shadow: 2px 0 6px rgba(0,0,0,.08);
+}
+
+/* ===== REMARK & STATUS COLUMN ===== */
+.remark-cell { min-width: 130px; padding: 3px 4px !important; }
+.remark-input {
+  width: 118px; padding: 3px 6px;
+  border: 1px solid var(--gray200); border-radius: 5px;
+  font-family: 'Sarabun', sans-serif; font-size: 11px;
+  color: var(--text); background: rgba(255,255,255,.85);
+  outline: none;
+}
+.remark-input:focus { border-color: var(--u2-border); box-shadow: 0 0 0 2px #378add22; background:#fff; }
+.status-cell { min-width: 100px; padding: 3px 4px !important; }
+.status-select {
+  padding: 3px 6px; border: 1px solid var(--gray200);
+  border-radius: 5px; font-family: 'Sarabun', sans-serif;
+  font-size: 11px; color: var(--text); background: #fff;
+  outline: none; cursor: pointer; width: 92px;
+}
+.status-select:focus { border-color: var(--u2-border); }
+.status-select.s-leave   { background: #fff3e0; color: #e67e22; border-color: #ffcc80; font-weight: 600; }
+.status-select.s-dropout { background: #ffebee; color: #c62828; border-color: #ef9a9a; font-weight: 600; }
+.status-select.s-normal  { background: #fff; color: var(--text); }
+
+/* ===== TABLE BASE ===== */
+table { width: 100%; min-width: 1480px; }
+
+/* Group header rows */
+thead tr.gh th {
+  padding: 7px 5px 5px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  border-right: 2px solid #fff;
+  white-space: nowrap;
+}
+thead tr.gh th.u1 { background: var(--u1-hd); color: #fff; }
+thead tr.gh th.u2 { background: var(--u2-hd); color: #fff; }
+thead tr.gh th.um { background: var(--um-hd); color: #fff; }
+thead tr.gh th.u3 { background: var(--u3-hd); color: #fff; }
+thead tr.gh th.u4 { background: var(--u4-hd); color: #fff; }
+thead tr.gh th.uf { background: var(--uf-hd); color: #fff; }
+thead tr.gh th.meta { background: var(--gray800); color: #fff; }
+
+/* Sub header row */
+thead tr.sh th {
+  padding: 5px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--gray800);
+  border-bottom: 2px solid var(--gray200);
+  white-space: nowrap;
+  line-height: 1.35;
+}
+thead tr.sh th.u1 { background: var(--u1-th); color: var(--u1-hd); border-right: 1px solid var(--u1-border); }
+thead tr.sh th.u2 { background: var(--u2-th); color: var(--u2-hd); border-right: 1px solid var(--u2-border); }
+thead tr.sh th.um { background: var(--um-th); color: var(--um-hd); border-right: 1px solid var(--um-border); }
+thead tr.sh th.u3 { background: var(--u3-th); color: var(--u3-hd); border-right: 1px solid var(--u3-border); }
+thead tr.sh th.u4 { background: var(--u4-th); color: var(--u4-hd); border-right: 1px solid var(--u4-border); }
+thead tr.sh th.uf { background: var(--uf-th); color: var(--uf-hd); border-right: 1px solid var(--uf-border); }
+thead tr.sh th.meta { background: var(--gray100); color: var(--gray800); }
+
+/* Right border separators for group ends */
+thead tr.sh th.sep-r { border-right: 2px solid var(--gray400) !important; }
+thead tr.gh th.sep-r { border-right: 2px solid rgba(255,255,255,.5) !important; }
+
+tbody tr {
+  border-bottom: 1px solid var(--gray100);
+  transition: background .1s;
+}
+tbody tr:hover { background: #f0f6ff; }
+tbody tr.hidden-row { display: none; }
+tbody tr:nth-child(even) { background: var(--gray50); }
+tbody tr:nth-child(even):hover { background: #e8f2ff; }
+
+tbody td {
+  padding: 5px 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+td.col-no { color: var(--gray400); font-size: 12px; width: 36px; padding-left: 10px; }
+td.col-id { color: var(--gray400); font-size: 11px; width: 60px; }
+td.col-name {
+  text-align: left;
+  padding-left: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray800);
+  min-width: 175px;
+}
+
+/* Colored group cells */
+td.u1 { background: #f5fbf9; }
+td.u2 { background: #f2f8fd; }
+td.um { background: #fdf6ea; }
+td.u3 { background: #f7f6ff; }
+td.u4 { background: #fef7f4; }
+td.uf { background: #f4faea; }
+tr:hover td.u1 { background: #e8f7f2; }
+tr:hover td.u2 { background: #e4f0fa; }
+tr:hover td.um { background: #faefd8; }
+tr:hover td.u3 { background: #efedfc; }
+tr:hover td.u4 { background: #faeee8; }
+tr:hover td.uf { background: #ecf7dc; }
+
+/* Separator column borders */
+td.sep-r { border-right: 2px solid var(--gray200); }
+
+/* Score inputs */
+.si {
+  width: 44px;
+  padding: 3px 2px;
+  background: rgba(255,255,255,.8);
+  border: 1px solid var(--gray200);
+  border-radius: 5px;
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 12px;
+  text-align: center;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.si:focus { border-color: var(--u2-border); box-shadow: 0 0 0 2px #378add22; background: #fff; }
+.si.si-raw { width: 38px; }
+.si.u1:focus { border-color: var(--u1-border); box-shadow: 0 0 0 2px #5dcaa522; }
+.si.u2:focus { border-color: var(--u2-border); box-shadow: 0 0 0 2px #378add22; }
+.si.um:focus { border-color: var(--um-border); box-shadow: 0 0 0 2px #ef9f2722; }
+.si.u3:focus { border-color: var(--u3-border); box-shadow: 0 0 0 2px #7f77dd22; }
+.si.u4:focus { border-color: var(--u4-border); box-shadow: 0 0 0 2px #d85a3022; }
+.si.uf:focus { border-color: var(--uf-border); box-shadow: 0 0 0 2px #63992222; }
+
+/* Computed totals */
+.computed {
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-block;
+  min-width: 36px;
+}
+.total-cell { font-size: 14px; }
+
+/* Grade badges */
+.gb {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 38px;
+  text-align: center;
+}
+.g4  { background: #1d9e75; color: #fff; }
+.g35 { background: #185fa5; color: #fff; }
+.g3  { background: #378add; color: #fff; }
+.g25 { background: #ba7517; color: #fff; }
+.g2  { background: #ef9f27; color: #fff; }
+.g15 { background: #d85a30; color: #fff; }
+.g1  { background: #a32d2d; color: #fff; }
+.g0  { background: #eef0f6; color: #5a6077; border: 1px solid #dde0ec; }
+.gr  { background: #534ab7; color: #fff; }
+
+/* Total column color */
+.total-cell .computed { color: var(--gray800); }
+.total-hl-hi  { color: #0f6e56 !important; }
+.total-hl-mid { color: #854f0b !important; }
+.total-hl-lo  { color: #a32d2d !important; }
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  background: var(--gray50);
+  border-top: 1px solid var(--gray200);
+  font-size: 12px;
+  align-items: center;
+}
+.stats-label { color: var(--gray600); margin-right: 4px; font-weight: 600; }
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--u2-hd);
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .25s, transform .25s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ===== LOGIN SCREEN ===== */
+#login-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #1a1d2e 0%, #185fa5 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.login-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px 44px;
+  box-shadow: 0 8px 48px rgba(0,0,0,.35);
+  width: 360px;
+  text-align: center;
+}
+.login-title {
+  font-family: 'Noto Serif Thai', serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--u2-hd); margin-bottom: 4px;
+}
+.login-sub { font-size: 13px; color: var(--gray600); margin-bottom: 24px; }
+.login-field {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; text-align: left;
+}
+.login-field label { font-size: 12px; font-weight: 600; color: var(--gray600); }
+.login-field input {
+  padding: 9px 14px; border: 1px solid var(--gray200);
+  border-radius: 8px; font-family: 'Sarabun', sans-serif;
+  font-size: 14px; outline: none; color: var(--text);
+  transition: border-color .15s;
+}
+.login-field input:focus { border-color: var(--u2-border); box-shadow: 0 0 0 2px #378add22; }
+.login-btn {
+  width: 100%; padding: 11px; background: var(--u2-hd);
+  color: #fff; font-weight: 700; font-size: 15px;
+  border: none; border-radius: 8px; cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  transition: opacity .15s; margin-top: 6px;
+}
+.login-btn:hover { opacity: .88; }
+.login-err { color: #c0392b; font-size: 12px; font-weight: 600; margin-top: 8px; min-height: 18px; }
+
+/* ===== CONFIRM MODAL ===== */
+#confirm-modal {
+  display: none; position: fixed; inset: 0; z-index: 8000;
+  background: rgba(0,0,0,.45); align-items: center; justify-content: center;
+}
+#confirm-modal.show { display: flex; }
+.confirm-box {
+  background: #fff; border-radius: 14px;
+  padding: 32px 36px; width: 340px; text-align: center;
+  box-shadow: 0 6px 32px rgba(0,0,0,.22);
+}
+.confirm-box h3 { font-size: 17px; font-weight: 700; color: var(--gray800); margin-bottom: 8px; }
+.confirm-box p { font-size: 13px; color: var(--gray600); margin-bottom: 22px; }
+.confirm-btns { display: flex; gap: 10px; justify-content: center; }
+.confirm-btns button {
+  padding: 9px 24px; border-radius: 8px; font-size: 14px;
+  font-weight: 700; cursor: pointer; font-family: 'Sarabun', sans-serif; border: none;
+}
+.btn-cancel-confirm { background: var(--gray100); color: var(--gray600); }
+.btn-ok-confirm { background: var(--u2-hd); color: #fff; }
+
+/* ===== SUMMARY PAGE ===== */
+.summary-card {
+  background: #fff; border: 1px solid var(--gray200);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: var(--shadow-md); margin-bottom: 24px;
+}
+.summary-card-head {
+  background: var(--u2-hd); color: #fff;
+  padding: 12px 20px; font-family: 'Noto Serif Thai', serif;
+  font-size: 15px; font-weight: 700;
+}
+.summary-table { width: 100%; border-collapse: collapse; }
+.summary-table th {
+  background: var(--gray100); color: var(--gray600);
+  font-size: 11px; font-weight: 700; padding: 8px 14px;
+  text-align: center; border-bottom: 1px solid var(--gray200);
+}
+.summary-table td {
+  padding: 8px 14px; text-align: center;
+  font-size: 13px; border-bottom: 1px solid var(--gray100);
+}
+.summary-table tr:last-child td { border-bottom: none; }
+.summary-table td.cls-name { text-align: left; font-weight: 600; color: var(--gray800); }
+.sum-hi { color: #0f6e56; font-weight: 700; }
+.sum-lo { color: #a32d2d; font-weight: 700; }
+.sum-warn { color: #854f0b; font-weight: 700; }
+
+/* Grade icon for 0, ร, มส */
+.gms { background: #fff3e0; color: #e67e22; border: 1px solid #ffcc80; }
+.ms-btn {
+  display: inline-block; padding: 2px 6px; margin-left: 4px;
+  font-size: 10px; font-weight: 700; cursor: pointer;
+  background: #fff3e0; border: 1px solid #ffcc80;
+  border-radius: 4px; color: #e67e22;
+  vertical-align: middle; line-height: 1.5;
+  transition: all .15s;
+}
+.ms-btn:hover { background: #ffcc80; }
+.ms-btn.active { background: #e67e22; color: #fff; border-color: #e67e22; }
+
+/* ===== UNIT TOTAL COLUMN ===== */
+td.unit-tot { font-weight: 700; font-size: 12px; text-align: center; border-right: 2px solid var(--gray200); }
+th.unit-tot { font-size: 10px; font-weight: 700; text-align: center; border-right: 2px solid rgba(255,255,255,.4); white-space: nowrap; line-height: 1.35; padding: 5px 3px; }
+
+/* ===== ROW HIGHLIGHT ===== */
+tr.row-grade0 td.col-name { background: #fde8e8 !important; font-weight: 700; }
+tr.row-grade0 td.col-name::before { content: '🔴 '; font-size: 11px; }
+tr.row-gradeR td.col-name { background: #fff8cc !important; font-weight: 700; }
+tr.row-gradeR td.col-name::before { content: '🟡 '; font-size: 11px; }
+tr.row-gradeMS td.col-name { background: #ffeacc !important; font-weight: 700; }
+tr.row-gradeMS td.col-name::before { content: '🟠 '; font-size: 11px; }
+
+/* ===== PDF BUTTON ===== */
+.btn-pdf { padding: 6px 14px; background: #c0392b; color: #fff; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 12px; transition: opacity .15s; }
+.btn-pdf:hover { opacity: .85; }
+
+/* ===== PRINT CSS ===== */
+.print-header { display: none; font-family: 'Noto Serif Thai', serif; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #1a1d2e; }
+
+@media print {
+  @page { size: A3 landscape; margin: 10mm 8mm; }
+  body { background: #fff !important; font-size: 10px !important; }
+  .header, .legend, .tabs, .stats-bar, .table-topbar { display: none !important; }
+  .main { display: none !important; padding: 0 !important; }
+  .main.print-target { display: block !important; }
+  #login-screen, #confirm-modal, .toast, #auto-toast { display: none !important; }
+  .table-card { border: none !important; box-shadow: none !important; }
+  .table-scroll { overflow: visible !important; }
+  table { min-width: unset !important; width: 100% !important; font-size: 8.5px !important; }
+  .si { border: none !important; background: transparent !important; width: auto !important; padding: 0 !important; font-size: 8.5px !important; text-align: center; }
+  .remark-cell, .status-cell, .ms-btn { display: none !important; }
+  th, td { padding: 3px 2px !important; }
+  .sticky-no, .sticky-id, .sticky-name { position: static !important; box-shadow: none !important; }
+  thead th, tbody td.u1, tbody td.u2, tbody td.um, tbody td.u3, tbody td.u4, tbody td.uf, tbody td.unit-tot,
+  tr.row-grade0 td.col-name, tr.row-gradeR td.col-name, tr.row-gradeMS td.col-name {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .print-header { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">ระบบเช็กการส่งงาน วิชาภาษาไทย</div>
+    <div class="header-sub">โรงเรียนแก่นนครวิทยาลัย สพม.ขอนแก่น — ม.6</div>
+  </div>
+  <div class="header-spacer"></div>
+  <div style="text-align:right">
+    <div class="sem-badge" style="margin-bottom:4px;display:inline-block">ภาคเรียนที่ 1 ปีการศึกษา 2569</div>
+    <div style="font-size:12px;color:var(--gray600);font-weight:600">ครูสิริณัฏฐ์  ลิมปิจำนงค์</div>
+  </div>
+</div>
+
+<div class="legend">
+  <span class="legend-label">สีตามหน่วย:</span>
+  <span class="legend-item" style="background:#e1f5ee;color:#0f6e56"><span class="legend-dot" style="background:#0f6e56"></span>หน่วย 1 กาพย์เห่เรือ</span>
+  <span class="legend-item" style="background:#e6f1fb;color:#185fa5"><span class="legend-dot" style="background:#185fa5"></span>หน่วย 2 ขุนช้างขุนแผน</span>
+  <span class="legend-item" style="background:#faeeda;color:#854f0b"><span class="legend-dot" style="background:#854f0b"></span>กลางภาค</span>
+  <span class="legend-item" style="background:#eeedfe;color:#3c3489"><span class="legend-dot" style="background:#3c3489"></span>หน่วย 3 การอ่านวิเคราะห์</span>
+  <span class="legend-item" style="background:#faece7;color:#993c1d"><span class="legend-dot" style="background:#993c1d"></span>หน่วย 4 การใช้ภาษา</span>
+  <span class="legend-item" style="background:#eaf3de;color:#3b6d11"><span class="legend-dot" style="background:#3b6d11"></span>ปลายภาค</span>
+  <span style="width:1px;background:var(--gray200);height:18px;display:inline-block;margin:0 4px"></span>
+  <span class="legend-label">เกรด:</span>
+  <span class="gb g4" style="font-size:11px;padding:1px 7px">4</span>
+  <span class="gb g35" style="font-size:11px;padding:1px 7px">3.5</span>
+  <span class="gb g3" style="font-size:11px;padding:1px 7px">3</span>
+  <span class="gb g25" style="font-size:11px;padding:1px 7px">2.5</span>
+  <span class="gb g2" style="font-size:11px;padding:1px 7px">2</span>
+  <span class="gb g15" style="font-size:11px;padding:1px 7px">1.5</span>
+  <span class="gb g1" style="font-size:11px;padding:1px 7px">1</span>
+  <span class="gb g0" style="font-size:11px;padding:1px 7px">0</span>
+  <span class="gb gr" style="font-size:11px;padding:1px 7px">ร</span>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-title">ระบบเช็กการส่งงาน</div>
+    <div class="login-sub">วิชาภาษาไทย ม.6 — โรงเรียนแกนนครวิทยาลัย</div>
+    <div class="login-field">
+      <label>ชื่อผู้ใช้</label>
+      <input type="text" id="login-user" placeholder="username" autocomplete="off">
+    </div>
+    <div class="login-field">
+      <label>รหัสผ่าน</label>
+      <input type="password" id="login-pass" placeholder="password">
+    </div>
+    <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirm-modal">
+  <div class="confirm-box">
+    <h3>ยืนยันการบันทึกข้อมูล</h3>
+    <p id="confirm-msg">ต้องการบันทึกข้อมูลคะแนนทั้งหมดหรือไม่?</p>
+    <div class="confirm-btns">
+      <button class="btn-cancel-confirm" onclick="closeConfirm()">ยกเลิก</button>
+      <button class="btn-ok-confirm" onclick="confirmSave()">ยืนยัน ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="panels"></div>
+<div class="toast" id="toast">บันทึกสำเร็จ ✓</div>
+
+<script>
+// ===== LOGIN =====
+function doLogin(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value.trim();
+  if(u==='admin'&&p==='645745'){
+    document.getElementById('login-screen').style.display='none';
+  } else {
+    document.getElementById('login-err').textContent='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+  }
+}
+document.addEventListener('keydown',function(e){
+  if(document.getElementById('login-screen').style.display==='none') return;
+  if(e.key==='Enter') doLogin();
+});
+
+// ===== CONFIRM MODAL =====
+let pendingSaveCi = null;
+function askSave(ci){
+  pendingSaveCi=ci;
+  const cls=CLASSES[ci];
+  document.getElementById('confirm-msg').textContent=`ยืนยันการบันทึกข้อมูลคะแนน ม.${cls.id} (${cls.students.length} คน)?`;
+  document.getElementById('confirm-modal').classList.add('show');
+}
+function closeConfirm(){
+  document.getElementById('confirm-modal').classList.remove('show');
+  pendingSaveCi=null;
+}
+function confirmSave(){
+  closeConfirm();
+  if(pendingSaveCi!==null) saveAll(pendingSaveCi);
+}
+
+const CLASSES = [
+  { id:'6/1', room:'628', students:[
+    {no:1,id:'45129',name:'นาย โฆษิตฉพัฒน์ ประจุดธะสี'},
+    {no:2,id:'45510',name:'นาย ธนกฤต ผงทอง'},
+    {no:3,id:'45173',name:'นาย นพเกล้า ปรินทร์ทอง'},
+    {no:4,id:'45134',name:'นาย ปฏิภาณ แจ้งตาย'},
+    {no:5,id:'48555',name:'นาย ปรกฉัตร ผาวงษ์หา'},
+    {no:6,id:'45135',name:'นาย เปี่ยมบุญ ชวดไชย'},
+    {no:7,id:'48556',name:'นาย ภูริธาดา ภูริวัฒนสุข'},
+    {no:8,id:'48557',name:'นาย วชิรวิชญ์ ปินะถา'},
+    {no:9,id:'48558',name:'นาย วิชญชพล เปี่ยมเชาว์ธนากุล'},
+    {no:10,id:'45215',name:'นาย สุภิวัฒน์ ลุนสา'},
+    {no:11,id:'48560',name:'นางสาว กรนันท์ ขันธวิชัย'},
+    {no:12,id:'45255',name:'นางสาว กัญจนอมล แพงคำ'},
+    {no:13,id:'48561',name:'นางสาว กิตติญากร อวมสุวรรณ'},
+    {no:14,id:'48562',name:'นางสาว กีรติกา ลุนพุฒ'},
+    {no:15,id:'48563',name:'นางสาว ขจีพรรณ สุดชาดี'},
+    {no:16,id:'45302',name:'นางสาว เจสสิกา กอก หยิ่น โล'},
+    {no:17,id:'48564',name:'นางสาว ฎีรฎา โพธิ์พุฒ'},
+    {no:18,id:'48565',name:'นางสาว ฐิดาภา วิมูลชาติ'},
+    {no:19,id:'45224',name:'นางสาว ณฐรัตน์ ริมสกุล'},
+    {no:20,id:'45226',name:'นางสาว เบญญาภา ขอมีกลาง'},
+    {no:21,id:'45401',name:'นางสาว ปริณดา บุญเรือง'},
+    {no:22,id:'44235',name:'นางสาว ปวริศา อนุชน'},
+    {no:23,id:'48567',name:'นางสาว พริ้มพักตร์ วอศิริ'},
+    {no:24,id:'45358',name:'นางสาว พิชยา พัฒมะนา'},
+    {no:25,id:'45190',name:'นางสาว ภควรรณ ปิยะกุลภัทร'},
+    {no:26,id:'48568',name:'นางสาว วิชญาพร มินทระ'},
+    {no:27,id:'45194',name:'นางสาว อภิชญา ศรีชำนิ'},
+  ]},
+  { id:'6/2', room:'5032', students:[
+    {no:1,id:'48569',name:'นาย กมลภพ เรียงไธสง'},
+    {no:2,id:'45200',name:'นาย กิติทัศ สุริ'},
+    {no:3,id:'45166',name:'นาย ขวัญประชา สุดชา'},
+    {no:4,id:'45130',name:'นาย จิรภัทร ธาตุบุรมย์'},
+    {no:5,id:'45203',name:'นาย ไชยกิจ เจริญรุ่งเรืองกูร'},
+    {no:6,id:'48570',name:'นาย ณัฐวรรธนกรณ์ สุวรรณพันธุ์'},
+    {no:7,id:'45207',name:'นาย ธนดล แสงพันธ์'},
+    {no:8,id:'45209',name:'นาย ปริพัฒน์ เจริญชัย'},
+    {no:9,id:'45138',name:'นาย รติวรรธน์ แสนจันทร์ฮาม'},
+    {no:10,id:'48572',name:'นาย หรัณย์ฤษฏ์ ภูผันผิน'},
+    {no:11,id:'48573',name:'นางสาว กนกพร คับพวง'},
+    {no:12,id:'45297',name:'นางสาว กรชนก กระแสโท'},
+    {no:13,id:'45220',name:'นางสาว กัญญาพัชร อุทัยทอง'},
+    {no:14,id:'45146',name:'นางสาว จิดาภา ซาเหลา'},
+    {no:15,id:'45307',name:'นางสาว ดวงพร บุญหลง'},
+    {no:16,id:'45152',name:'นางสาว ธีรวรา วันเทาแก้ว'},
+    {no:17,id:'48574',name:'นางสาว นันทนภัส มิณะสิงห์'},
+    {no:18,id:'48575',name:'นางสาว บุศราภรณ์ จันละคร'},
+    {no:19,id:'45153',name:'นางสาว ปทิตตา นาตาแสง'},
+    {no:20,id:'48576',name:'นางสาว ปราณปรียา วรรณไชย'},
+    {no:21,id:'48577',name:'นางสาว ปุณยวีร์ ฮาดวิเศษ'},
+    {no:22,id:'45155',name:'นางสาว พอเพียง ภูมีศรี'},
+    {no:23,id:'45156',name:'นางสาว พัชรพร หาวหาญ'},
+    {no:24,id:'45189',name:'นางสาว พีรญา แฝงฤทธิ์'},
+    {no:25,id:'45314',name:'นางสาว มนัสนันท์ สะตะ'},
+    {no:26,id:'48578',name:'นางสาว ศรัณย์รัชต์ เทกอง'},
+    {no:27,id:'45162',name:'นางสาว สุฐิตา กังวานธรรมกุล'},
+    {no:28,id:'45163',name:'นางสาว โสภิตสุดา มีศรี'},
+    {no:29,id:'45196',name:'นางสาว อังคณา ทุมโคตร'},
+  ]},
+  { id:'6/3', room:'638', students:[
+    {no:1,id:'45719',name:'นาย กฤตานนท์ ศรีพิลา'},
+    {no:2,id:'45128',name:'นาย กวินปรัตถ์ ชัยนิคม'},
+    {no:3,id:'45168',name:'นาย ณปกร กุนอก'},
+    {no:4,id:'45171',name:'นาย ณิชกุล ศุภิรัตน์กุล'},
+    {no:5,id:'45723',name:'นาย ตรินัยน์ ระว้า'},
+    {no:6,id:'48579',name:'นาย เทพรัตน์ บุณยฤทธิ์รักษา'},
+    {no:7,id:'45133',name:'นาย ธัชธรรม ภักดี'},
+    {no:8,id:'45174',name:'นาย นภัสกร คำชมภู'},
+    {no:9,id:'48580',name:'นาย นัฐพล บริบาล'},
+    {no:10,id:'48581',name:'นาย พงศ์พล กีรตินันทกูล'},
+    {no:11,id:'45141',name:'นาย วายุ มุลตะกร'},
+    {no:12,id:'45142',name:'นาย วีระวุฒิ เสนาสุ'},
+    {no:13,id:'48582',name:'นางสาว กฏิมา โอดพิมพ์'},
+    {no:14,id:'48583',name:'นางสาว ชนมน มูลแม้'},
+    {no:15,id:'45149',name:'นางสาว ณัฐมน แก้วชิน'},
+    {no:16,id:'45737',name:'นางสาว ตุลรภัฏ บุญไตรย์'},
+    {no:17,id:'45150',name:'นางสาว ทิพานันท์ พิรักษ์'},
+    {no:18,id:'45225',name:'นางสาว ธนันณัฐ เถาหมอ'},
+    {no:19,id:'45769',name:'นางสาว นัทชา กองทองนอก'},
+    {no:20,id:'45185',name:'นางสาว นัทธชนัน ทศชา'},
+    {no:21,id:'48584',name:'นางสาว นันทนา ภูพันธ์รัตน์'},
+    {no:22,id:'46149',name:'นางสาว ปภาวรินทร์ ภะวะพินิจ'},
+    {no:23,id:'45229',name:'นางสาว ปิยะธิดา มะโนชมภู'},
+    {no:24,id:'44397',name:'นางสาว พลอยณภัทร ขจัดพาล'},
+    {no:25,id:'48585',name:'นางสาว มิเกลลา ดินาตาลี'},
+    {no:26,id:'45744',name:'นางสาว เวชกัญญา วรรณราช'},
+    {no:27,id:'45161',name:'นางสาว สีวิกากาญจน์ พันธ์ชูจิตร'},
+    {no:28,id:'45197',name:'นางสาว อัจฉรา ผลาพรหม'},
+    {no:29,id:'48587',name:'นางสาว อารยา คำชาย'},
+    {no:30,id:'45198',name:'นางสาว อินทุอร ธีรวัฒน์กุล'},
+  ]},
+  { id:'6/5', room:'314', students:[
+    {no:1,id:'45368',name:'นาย กรวิชญ์ ผาสุโพธิ์'},
+    {no:2,id:'48683',name:'นาย กิตติภัทร อรรถาเวช'},
+    {no:3,id:'45201',name:'นาย คณิศร แพทย์กิจ'},
+    {no:4,id:'45327',name:'นาย จุลจักร เนื่องแก้ว'},
+    {no:5,id:'45506',name:'นาย ณฐกร นาคเจือทอง'},
+    {no:6,id:'45240',name:'นาย ณัฐชนน พราหมณ์ตะขบ'},
+    {no:7,id:'45131',name:'นาย ณัฐดนัย ฤกษ์สุขสมบัติ'},
+    {no:8,id:'45547',name:'นาย ณัฐวุฒิ เพ็งค่ำ'},
+    {no:9,id:'45330',name:'นาย ธณากร สุนทร'},
+    {no:10,id:'48795',name:'นาย ธนกร ไพรีรณ'},
+    {no:11,id:'45208',name:'นาย ปภาวิน ไตยนำ'},
+    {no:12,id:'48615',name:'นาย ภาวิช ชัยพิวงศ์'},
+    {no:13,id:'45177',name:'นาย ภูวดล กวินพิทยาธร'},
+    {no:14,id:'45478',name:'นางสาว กฤตพร สนิทเชื้อ'},
+    {no:15,id:'45219',name:'นางสาว กฤติกานต์ โคตรแก้ว'},
+    {no:16,id:'45480',name:'นางสาว กวิสรา พันเดช'},
+    {no:17,id:'45299',name:'นางสาว กัญฐิกา สีพลเละ'},
+    {no:18,id:'45389',name:'นางสาว กัลยสุดา ขาวอ่อน'},
+    {no:19,id:'45731',name:'นางสาว กุลปริยา ศรีประจันทร์'},
+    {no:20,id:'45570',name:'นางสาว จุฬาลักษณ์ ศรีหลัก'},
+    {no:21,id:'45484',name:'นางสาว ชนินาถ อนันตกุล'},
+    {no:22,id:'45394',name:'นางสาว ณัฏฐา รินนรา'},
+    {no:23,id:'45657',name:'นางสาว ณัฐธัญญา สีไต'},
+    {no:24,id:'45300',name:'นางสาว นิษฐเนตร ประเสริฐสังข์'},
+    {no:25,id:'48644',name:'นางสาว ปริยากร ทองหลาง'},
+    {no:26,id:'48645',name:'นางสาว ปาลิดา เลิศประเสริฐ'},
+    {no:27,id:'45537',name:'นางสาว พิยดา ประสมพล'},
+    {no:28,id:'47042',name:'นางสาว มนปรียา ทะยะราช'},
+    {no:29,id:'48647',name:'นางสาว เรืองอุไร ชาวยศ'},
+    {no:30,id:'45158',name:'นางสาว วณัชญา สามสี'},
+    {no:31,id:'45742',name:'นางสาว วริยาภรณ์ พลอาสา'},
+    {no:32,id:'48641',name:'นางสาว ศศิวิมล สอนสี'},
+    {no:33,id:'45585',name:'นางสาว ศิรินลดา เถาศิลป์'},
+    {no:34,id:'45716',name:'นางสาว ศุภกานต์ สังตะพันธ์'},
+    {no:35,id:'45363',name:'นางสาว ศุภานิช สีนาจ'},
+    {no:36,id:'48610',name:'นางสาว สรัลชนา ซัง'},
+    {no:37,id:'45451',name:'นางสาว สุชาดา วรรณวิเชษฐ์'},
+    {no:38,id:'45320',name:'นางสาว สุทธิดา บุญช่วย'},
+    {no:39,id:'45542',name:'นางสาว อมิตา เกรซ พาเนอร์ ศรีสันต์'},
+    {no:40,id:'45322',name:'นางสาว อัญมณี ศรีบุญ'},
+  ]},
+  { id:'6/11', room:'335', students:[
+    {no:1,id:'45236',name:'นาย กรวิทย์ หาญวงษา'},
+    {no:2,id:'45324',name:'นาย กฤตภาส กลมกลอมทวี'},
+    {no:3,id:'45783',name:'นาย กิตติภัทร อัมมาลา'},
+    {no:4,id:'45238',name:'นาย จักริน บุญลักษณ์'},
+    {no:5,id:'45459',name:'นาย จิรัชยานันท์ แข็งขยัน'},
+    {no:6,id:'45683',name:'นาย ณภัทร สมบัติหอม'},
+    {no:7,id:'47059',name:'นาย ณัฐชนน อุรัญ'},
+    {no:8,id:'45548',name:'นาย เทพภาณุ งามนิรัตน์'},
+    {no:9,id:'45509',name:'นาย แทนทันฑ์ โยนอก'},
+    {no:10,id:'45792',name:'นาย ธณาธิป พลโชติ'},
+    {no:11,id:'45331',name:'นาย ธนพัทร มุลละคร'},
+    {no:12,id:'45419',name:'นาย ธนวินท์ ราชสิงโห'},
+    {no:13,id:'48605',name:'นาย ปริพัทธ์ ภูโบราณ'},
+    {no:14,id:'45556',name:'นาย ปิยังกูร ศิริภักดิ์'},
+    {no:15,id:'46135',name:'นาย พงษ์รพี ภูระยา'},
+    {no:16,id:'45335',name:'นาย พีรวัส เหล่าจูม'},
+    {no:17,id:'45337',name:'นาย มงคลชัย ศิริโอด'},
+    {no:18,id:'45519',name:'นาย ยศพร อนะคร'},
+    {no:19,id:'45802',name:'นาย ยศสรัล สายชม'},
+    {no:20,id:'45249',name:'นาย ราชิต หงษ์คะ'},
+    {no:21,id:'45561',name:'นาย ศุภกร อุ่นพลทอง'},
+    {no:22,id:'45806',name:'นาย ศุภกฤต พิลาดา'},
+    {no:23,id:'45251',name:'นาย อธิวัฒน์ โยธาสมบัติ'},
+    {no:24,id:'45434',name:'นางสาว กชพร ปลั่งศิริ'},
+    {no:25,id:'45698',name:'นางสาว กัลยกร อิศรา'},
+    {no:26,id:'45655',name:'นางสาว เกศชยามล ภูมิผักแว่น'},
+    {no:27,id:'45527',name:'นางสาว ชนธิชา สุริยา'},
+    {no:28,id:'45483',name:'นางสาว ชนันธร กีรติกูล'},
+    {no:29,id:'45148',name:'นางสาว ชาลิสา หลาปุ้ย'},
+    {no:30,id:'45736',name:'นางสาว ฐิตาภา ศรีศักดิ์'},
+    {no:31,id:'45577',name:'นางสาว ณัฐกมล ขจรศรี'},
+    {no:32,id:'48597',name:'นางสาว ณัฐมน เสียงใส'},
+    {no:33,id:'45663',name:'นางสาว เบญญาภา จันดีบาง'},
+    {no:34,id:'45579',name:'นางสาว ประภาศิริ คำมูล'},
+    {no:35,id:'45443',name:'นางสาว พิชญสินี ศรีไชโย'},
+    {no:36,id:'45622',name:'นางสาว ภัณฑิรา ตาเมือง'},
+    {no:37,id:'45626',name:'นางสาว วิมพวิภา เวียงอินทร์'},
+    {no:38,id:'47044',name:'นางสาว วีริสรา เยื่องกลาง'},
+    {no:39,id:'49768',name:'นางสาว สุธิมา สุบิน'},
+    {no:40,id:'45627',name:'นางสาว สุภานัน ทองสุข'},
+  ]},
+  { id:'6/12', room:'บัลเลต์ 1', students:[
+    {no:1,id:'48629',name:'นาย คุณรัฐ มาศยคง'},
+    {no:2,id:'45679',name:'นาย ชินดนัย สิงห์อารมย์'},
+    {no:3,id:'45637',name:'นาย ชิษนุพงศ์ ปิยะวงษ์'},
+    {no:4,id:'45239',name:'นาย โชติปุญโญ นนสีลาด'},
+    {no:5,id:'45461',name:'นาย ญาณวุฒิ พระคุณ'},
+    {no:6,id:'45463',name:'นาย ณัฐนนท์ สุทธิรักษา'},
+    {no:7,id:'45724',name:'นาย ทักษพล โลแก้ว'},
+    {no:8,id:'45596',name:'นาย ทิวากร ฉัตรานุฉัตร'},
+    {no:9,id:'45243',name:'นาย แทนคุณ จันงาม'},
+    {no:10,id:'45416',name:'นาย ธนกฤต ฉลูทอง'},
+    {no:11,id:'45752',name:'นาย ธีรจุฑา ภูกาบ'},
+    {no:12,id:'45600',name:'นาย ธีรภัทร หัสกัน'},
+    {no:13,id:'45378',name:'นาย นราวิชญ์ ผางจันทร์ดา'},
+    {no:14,id:'47812',name:'นาย นัธทวัฒน์ ภูสง่า'},
+    {no:15,id:'45553',name:'นาย นันทภพ แสงตามี'},
+    {no:16,id:'45424',name:'นาย พงศ์พณิช มรรคอนันตโชค'},
+    {no:17,id:'45798',name:'นาย พัทธดนย์ อินทรสงเคราะห์'},
+    {no:18,id:'49774',name:'นาย พิชยะ อ่อนลำ'},
+    {no:19,id:'45643',name:'นาย พีรทัต พลเยี่ยม'},
+    {no:20,id:'48614',name:'นาย ภาณุ ชำนาญไพร'},
+    {no:21,id:'48606',name:'นาย ภูดิศ ปริญญารัตน์'},
+    {no:22,id:'48616',name:'นาย ภูมิพัฒน์ จำเนียรพล'},
+    {no:23,id:'45475',name:'นาย สรวิชญ์ อินหาดกรวด'},
+    {no:24,id:'45431',name:'นาย สรศักดิ์ นนทะโมลี'},
+    {no:25,id:'45180',name:'นาย อธิชัย พวงสูงเนิน'},
+    {no:26,id:'45343',name:'นางสาว กัลยกร โดดชัย'},
+    {no:27,id:'48639',name:'นางสาว กานต์ธิดา หมองคำหมื่น'},
+    {no:28,id:'45656',name:'นางสาว จิรชยา เจ็กไธสง'},
+    {no:29,id:'45223',name:'นางสาว ญานิศา รังคะวงษ์'},
+    {no:30,id:'48608',name:'นางสาว ณัฐริการ์ แก้วก่ำ'},
+    {no:31,id:'48626',name:'นางสาว แทนขวัญ อุปปง'},
+    {no:32,id:'45266',name:'นางสาว ธัญชนก เพ็ชรคำ'},
+    {no:33,id:'45442',name:'นางสาว พัณณิตา ทะสังขาร'},
+    {no:34,id:'45403',name:'นางสาว พิมพ์ชนก โสภาตา'},
+    {no:35,id:'48628',name:'นางสาว พิมลรัตน์ อัยยะ'},
+    {no:36,id:'45490',name:'นางสาว รินนภา อนุศิริ'},
+    {no:37,id:'48760',name:'นางสาว วรัญญา ชมวงศ์'},
+    {no:38,id:'45780',name:'นางสาว ศศิวิมล บุญเอก'},
+    {no:39,id:'48638',name:'นางสาว ศิริประภา เดชแพง'},
+    {no:40,id:'48709',name:'นางสาว สุนันทา ศิริมา'},
+    {no:41,id:'45586',name:'นางสาว ไอยาดา สูนย์ชัยยา'},
+  ]},
+  { id:'6/20', room:'641', students:[
+    {no:1,id:'45721',name:'นาย กันตภณ นาควัฒนกุล'},
+    {no:2,id:'45722',name:'นาย คูณอนันต์ สิงห์วิเศษ'},
+    {no:3,id:'48729',name:'นาย ชยกฤต ธรรมวงษา'},
+    {no:4,id:'48730',name:'นาย ทัชชกร อมราพรปวรา'},
+    {no:5,id:'48755',name:'นาย เปรม เทพศิริอำนวย'},
+    {no:6,id:'45727',name:'นาย วชิรวิทย์ พิสุทธิมาน'},
+    {no:7,id:'48731',name:'นาย วรภพ ช่างทองที'},
+    {no:8,id:'48732',name:'นาย วิวิทย์ นาคเครือ'},
+    {no:9,id:'48733',name:'นางสาว กัญญวรินทร์ พรมจักร'},
+    {no:10,id:'48734',name:'นางสาว กุลภรณ์ นาอุดม'},
+    {no:11,id:'45573',name:'นางสาว ชันญาพรพ์ ศิริเต็มกุล'},
+    {no:12,id:'48735',name:'นางสาว ฐานิกา หงษ์สุวรรณ'},
+    {no:13,id:'48736',name:'นางสาว ดนุลดามาศภรณ์ ฟุ้งเฟื่อง'},
+    {no:14,id:'45738',name:'นางสาว ธยศศวรรณ ถูไกรวงษ์'},
+    {no:15,id:'48737',name:'นางสาว พัทธนันท์ ทัศนพงษ์'},
+    {no:16,id:'48739',name:'นางสาว เพ็ญพิชชา ปุนนิน'},
+    {no:17,id:'48740',name:'นางสาว รุจิดา กาสา'},
+    {no:18,id:'48741',name:'นางสาว วฤนดา คำแปน'},
+    {no:19,id:'48742',name:'นางสาว อนัญญา บุญจู'},
+    {no:20,id:'45235',name:'นางสาว อิสรา เอกอุ'},
+  ]},
+];
+
+// col class per field key
+const COL = {
+  u1_recite:'u1', u1_analyze:'u1', u1_exam:'u1',
+  u2_debate:'u2', u2_reading1:'u2', u2_exam:'u2',
+  mid_mc_raw:'um', mid_essay:'um',
+  u3_book_exam:'u3', u3_present:'u3', u3_exam:'u3',
+  u4_worksheet:'u4', u4_exam:'u4', u4_reading2:'u4', u4_sign:'u4',
+  fin_mc_raw:'uf', fin_essay:'uf',
+};
+
+const FIELDS = [
+  {key:'u1_recite',  label:'ท่องจำทำนองเสนาะ', max:10,  g:'u1', requiredR:true},
+  {key:'u1_analyze', label:'วิเคราะห์คุณค่า',   max:2.5, g:'u1'},
+  {key:'u1_exam',    label:'สอบท้ายหน่วย 1',    max:2.5, g:'u1', sepR:true},
+  {key:'u2_debate',  label:'โต้วาที',            max:5,   g:'u2'},
+  {key:'u2_reading1',label:'บันทึกรักอ่าน ครั้ง 1', max:5, g:'u2', requiredR:true},
+  {key:'u2_exam',    label:'สอบท้ายหน่วย 2',    max:5,   g:'u2', sepR:true},
+  {key:'mid_mc_raw', label:'ปรนัย÷2=15',        max:30,  g:'um', midRaw:true},
+  {key:'mid_essay',  label:'อัตนัย',             max:5,   g:'um', afterMidTotal:true, sepR:true},
+  {key:'u3_book_exam',label:'สอบอ่านนอกเวลา',   max:10,  g:'u3'},
+  {key:'u3_present', label:'ส่งข้อสอบนำเสนอ',   max:3,   g:'u3'},
+  {key:'u3_exam',    label:'สอบท้ายหน่วย 3',    max:2,   g:'u3', sepR:true},
+  {key:'u4_worksheet',label:'ใบงานระดับภาษา',   max:2,   g:'u4'},
+  {key:'u4_exam',    label:'สอบท้ายหน่วย 4',    max:3,   g:'u4'},
+  {key:'u4_reading2',label:'บันทึกรักอ่าน ครั้ง 2', max:5, g:'u4', requiredR:true},
+  {key:'u4_sign',    label:'นับลายเซ็น',         max:5,   g:'u4', sepR:true},
+  {key:'fin_mc_raw', label:'ปรนัย÷3=10',        max:30,  g:'uf', finRaw:true},
+  {key:'fin_essay',  label:'อัตนัย',             max:10,  g:'uf', afterFinTotal:true},
+];
+
+// Grade groups config for header
+const GROUP_HEADERS = [
+  {label:'หน่วย 1 — กาพย์เห่เรือ (15)', g:'u1', span:3},
+  {label:'หน่วย 2 — ขุนช้างขุนแผน (15)', g:'u2', span:3},
+  {label:'สอบกลางภาค (20)', g:'um', span:3},
+  {label:'หน่วย 3 — การอ่านวิเคราะห์ (15)', g:'u3', span:3},
+  {label:'หน่วย 4 — การใช้ภาษา (15)', g:'u4', span:4},
+  {label:'สอบปลายภาค (20)', g:'uf', span:3},
+];
+
+function getGrade(score, flagR, flagMS){
+  if(flagMS) return 'มส';
+  if(flagR) return 'ร';
+  if(score>=80) return '4';
+  if(score>=75) return '3.5';
+  if(score>=70) return '3';
+  if(score>=65) return '2.5';
+  if(score>=60) return '2';
+  if(score>=55) return '1.5';
+  if(score>=50) return '1';
+  return '0';
+}
+function gradeClass(g){
+  const m={'4':'g4','3.5':'g35','3':'g3','2.5':'g25','2':'g2','1.5':'g15','1':'g1','0':'g0','ร':'gr','มส':'gms'};
+  return m[g]||'g0';
+}
+function gradeIcon(g){
+  if(g==='0') return ' <span style="color:#e74c3c">🔴</span>';
+  if(g==='ร') return ' <span style="color:#f1c40f">🟡</span>';
+  if(g==='มส') return ' <span style="color:#e67e22">🟠</span>';
+  return '';
+}
+function calcTotals(d){
+  const v=k=>parseFloat(d[k])||0;
+  const u1=v('u1_recite')+v('u1_analyze')+v('u1_exam');
+  const u2=v('u2_debate')+v('u2_reading1')+v('u2_exam');
+  const midMC=Math.min(v('mid_mc_raw')/2,15);
+  const mid=midMC+Math.min(v('mid_essay'),5);
+  const u3=v('u3_book_exam')+v('u3_present')+v('u3_exam');
+  const u4=v('u4_worksheet')+v('u4_exam')+v('u4_reading2')+v('u4_sign');
+  const finMC=Math.min(v('fin_mc_raw')/3,10);
+  const fin=finMC+Math.min(v('fin_essay'),10);
+  const total=Math.min(u1,15)+Math.min(u2,15)+Math.min(mid,20)+Math.min(u3,15)+Math.min(u4,15)+Math.min(fin,20);
+  const miss=k=>d[k]===''||d[k]===undefined||d[k]===null;
+  const flagR=miss('u1_recite')||miss('u2_reading1')||miss('u4_reading2');
+  const flagMS=!!d['_ms'];
+  return {u1,u2,mid,u3,u4,fin,total:Math.min(total,100),flagR,flagMS};
+}
+function skey(cls,sid){return`sc_${cls}_${sid}`;}
+function load(cls,sid){try{const r=localStorage.getItem(skey(cls,sid));return r?JSON.parse(r):{}}catch(e){return {};}}
+function save(cls,sid,data){localStorage.setItem(skey(cls,sid),JSON.stringify(data));}
+
+function buildTable(cls){
+  // GROUP_HEADERS: u1,u2,um,u3,u4,uf — เพิ่ม colspan+1 ให้ u1,u2,u3,u4 (มีคอลัมน์รวม)
+  let ghRow='<tr class="gh">'
+    +'<th rowspan="2" class="meta sticky-no" style="min-width:36px;left:0">ที่</th>'
+    +'<th rowspan="2" class="meta sticky-id" style="min-width:62px;left:36px">รหัส</th>'
+    +'<th rowspan="2" class="meta sticky-name" style="min-width:178px;text-align:left;padding-left:12px;left:98px">ชื่อ-สกุล</th>';
+  const unitGroups=['u1','u2','u3','u4'];
+  GROUP_HEADERS.forEach(gh=>{
+    const extraCol=unitGroups.includes(gh.g)?1:0;
+    ghRow+=`<th colspan="${gh.span+extraCol}" class="${gh.g}${gh.g==='u4'?' sep-r':''}">${gh.label}</th>`;
+  });
+  ghRow+='<th rowspan="2" class="meta" style="min-width:50px">รวม<br>100</th>'
+       +'<th rowspan="2" class="meta" style="min-width:70px">เกรด</th>'
+       +'<th rowspan="2" class="meta" style="min-width:100px">สถานะ</th>'
+       +'<th rowspan="2" class="meta" style="min-width:130px">หมายเหตุ</th>'
+       +'</tr>';
+
+  const unitTotLabel={'u1':'รวม /15','u2':'รวม /15','u3':'รวม /15','u4':'รวม /15'};
+  const unitTotColor={'u1':'#0f6e56','u2':'#185fa5','u3':'#3c3489','u4':'#993c1d'};
+
+  let shRow='<tr class="sh">';
+  FIELDS.forEach(f=>{
+    const sep=f.sepR?' sep-r':'';
+    shRow+=`<th class="${f.g}${sep}" style="min-width:${f.midRaw||f.finRaw?40:44}px">${f.label}<br><span style="font-size:9px;opacity:.8">/${f.max}</span></th>`;
+    if(f.afterMidTotal) shRow+=`<th class="um sep-r" style="min-width:42px">รวม<br>/20</th>`;
+    if(f.afterFinTotal) shRow+=`<th class="uf" style="min-width:42px">รวม<br>/20</th>`;
+    // คอลัมน์รวมหน่วย — วางหลัง field สุดท้ายของแต่ละหน่วย
+    if(f.sepR && unitTotLabel[f.g]){
+      shRow+=`<th class="unit-tot ${f.g}" style="min-width:46px;color:${unitTotColor[f.g]}">${unitTotLabel[f.g]}</th>`;
+    }
+  });
+  shRow+='</tr>';
+
+  let rows='';
+  cls.students.forEach(s=>{
+    const d=load(cls.id,s.id);
+    const{u1,u2,mid,u3,u4,fin,total,flagR,flagMS}=calcTotals(d);
+    const grade=getGrade(total,flagR,flagMS);
+    const gc=gradeClass(grade);
+    const tc=total>=60?'total-hl-hi':total>=40?'total-hl-mid':'total-hl-lo';
+    const msActive=flagMS?'active':'';
+    const status=d['_status']||'';
+    const remark=d['_remark']||'';
+    const statusClass=status==='leave'?'s-leave':status==='dropout'?'s-dropout':'s-normal';
+    // ไฮไลท์แถวตามเกรด
+    const alertClass = grade==='0'?'row-alert row-grade0':grade==='ร'?'row-alert row-gradeR':grade==='มส'?'row-alert row-gradeMS':'';
+    rows+=`<tr data-cls="${cls.id}" data-sid="${s.id}" data-name="${s.name}" class="${alertClass}">`;
+    rows+=`<td class="col-no sticky-no" style="left:0">${s.no}</td>`
+         +`<td class="col-id sticky-id" style="left:36px">${s.id}</td>`
+         +`<td class="col-name sticky-name" style="left:98px">${s.name}</td>`;
+    FIELDS.forEach(f=>{
+      const val=d[f.key]!==undefined?d[f.key]:'';
+      const sep=f.sepR?' sep-r':'';
+      rows+=`<td class="${f.g}${sep}"><input type="number" class="si ${f.g}${f.midRaw||f.finRaw?' si-raw':''}" data-key="${f.key}" data-max="${f.max}" data-cls="${cls.id}" data-sid="${s.id}" value="${val}" min="0" max="${f.max}" step="0.5" onchange="onChange(this)" onkeydown="onEnterKey(event,this)"></td>`;
+      if(f.afterMidTotal) rows+=`<td class="um sep-r"><span class="computed mid-tot" style="color:#854f0b">${mid.toFixed(1)}</span></td>`;
+      if(f.afterFinTotal) rows+=`<td class="uf"><span class="computed fin-tot" style="color:#3b6d11">${fin.toFixed(1)}</span></td>`;
+      // คอลัมน์รวมหน่วย
+      if(f.sepR && f.g==='u1') rows+=`<td class="unit-tot u1"><span class="computed u1-tot" style="color:#0f6e56">${Math.min(u1,15).toFixed(1)}</span></td>`;
+      if(f.sepR && f.g==='u2') rows+=`<td class="unit-tot u2"><span class="computed u2-tot" style="color:#185fa5">${Math.min(u2,15).toFixed(1)}</span></td>`;
+      if(f.sepR && f.g==='u3') rows+=`<td class="unit-tot u3"><span class="computed u3-tot" style="color:#3c3489">${Math.min(u3,15).toFixed(1)}</span></td>`;
+      if(f.sepR && f.g==='u4') rows+=`<td class="unit-tot u4 sep-r"><span class="computed u4-tot" style="color:#993c1d">${Math.min(u4,15).toFixed(1)}</span></td>`;
+    });
+    rows+=`<td class="total-cell"><span class="computed total-val ${tc}">${total.toFixed(1)}</span></td>`;
+    rows+=`<td style="white-space:nowrap"><span class="gb ${gc} gb-cell">${grade}${gradeIcon(grade)}</span> <span class="ms-btn ${msActive}" onclick="toggleMS('${cls.id}','${s.id}',this)" title="กำหนด มส">มส</span></td>`;
+    rows+=`<td class="status-cell"><select class="status-select ${statusClass}" onchange="onStatusChange(this,'${cls.id}','${s.id}')">
+      <option value="" ${status===''?'selected':''}>ปกติ</option>
+      <option value="leave" ${status==='leave'?'selected':''}>🟡 พักการเรียน</option>
+      <option value="dropout" ${status==='dropout'?'selected':''}>🔴 ลาออก</option>
+    </select></td>`;
+    rows+=`<td class="remark-cell"><input type="text" class="remark-input" placeholder="หมายเหตุ..." value="${remark.replace(/"/g,'&quot;')}" onchange="onRemarkChange(this,'${cls.id}','${s.id}')"></td>`;
+    rows+='</tr>';
+  });
+
+  return `<thead>${ghRow}${shRow}</thead><tbody>${rows}</tbody>`;
+}
+
+function buildPanel(cls,ci){
+  return `<div class="table-card">
+    <div class="print-header">คะแนนเก็บ วิชาภาษาไทย ม.6 — ชั้น ม.${cls.id} ห้อง ${cls.room} | ครูสิริณัฏฐ์ ลิมปิจำนงค์ | ภาคเรียนที่ 1/2569</div>
+    <div class="table-topbar">
+      <div class="table-title">ม.${cls.id} &nbsp;·&nbsp; ห้อง ${cls.room}</div>
+      <div class="student-badge">นักเรียน ${cls.students.length} คน</div>
+      <input class="search-box" type="text" placeholder="ค้นหาชื่อหรือรหัส..." oninput="filterRows(this,${ci})">
+      <button class="btn-export" onclick="exportCSV('${cls.id}',${ci})">↓ Export CSV</button>
+      <button class="btn-pdf" onclick="printPDF(${ci})">🖨 ดาวน์โหลด PDF</button>
+      <button class="btn-save" onclick="askSave(${ci})">💾 บันทึกข้อมูล</button>
+    </div>
+    <div class="table-scroll"><table>${buildTable(cls)}</table></div>
+    <div class="stats-bar" id="stats_${ci}">${buildStats(cls)}</div>
+  </div>`;
+}
+
+function printPDF(ci){
+  document.querySelectorAll('.main').forEach(p=>p.classList.remove('print-target'));
+  const panel=document.getElementById('panel_'+ci);
+  if(panel) panel.classList.add('print-target');
+  window.print();
+  setTimeout(()=>{
+    document.querySelectorAll('.main').forEach(p=>p.classList.remove('print-target'));
+  },1000);
+}
+
+function buildStats(cls){
+  const cnt={'4':0,'3.5':0,'3':0,'2.5':0,'2':0,'1.5':0,'1':0,'0':0,'ร':0,'มส':0,'?':0};
+  cls.students.forEach(s=>{
+    const d=load(cls.id,s.id);
+    const allEmpty=FIELDS.every(f=>d[f.key]===''||d[f.key]===undefined);
+    if(allEmpty&&!d['_ms']){cnt['?']++;return;}
+    const{total,flagR,flagMS}=calcTotals(d);
+    cnt[getGrade(total,flagR,flagMS)]++;
+  });
+  const cfg={
+    '4':{bg:'#1d9e75',c:'#fff'},
+    '3.5':{bg:'#185fa5',c:'#fff'},
+    '3':{bg:'#378add',c:'#fff'},
+    '2.5':{bg:'#ba7517',c:'#fff'},
+    '2':{bg:'#ef9f27',c:'#fff'},
+    '1.5':{bg:'#d85a30',c:'#fff'},
+    '1':{bg:'#a32d2d',c:'#fff'},
+    '0':{bg:'#e74c3c',c:'#fff'},
+    'ร':{bg:'#f1c40f',c:'#333'},
+    'มส':{bg:'#e67e22',c:'#fff'},
+    '?':{bg:'#dde0ec',c:'#5a6077'},
+  };
+  let h='<span class="stats-label">สรุปเกรด:</span>';
+  Object.entries(cnt).forEach(([g,n])=>{
+    if(!n) return;
+    const s=cfg[g];
+    const lbl=g==='?'?'ยังไม่กรอก':g==='ร'?'ติด ร':g==='มส'?'ติด มส':`เกรด ${g}`;
+    h+=`<span class="stat-chip" style="background:${s.bg};color:${s.c}">${lbl} — ${n}</span>`;
+  });
+  return h;
+}
+
+function toggleMS(clsId,sid,btn){
+  const d=load(clsId,sid);
+  d['_ms']=!d['_ms'];
+  save(clsId,sid,d);
+  btn.classList.toggle('active',!!d['_ms']);
+  const row=btn.closest('tr');
+  refreshRow(row,clsId,sid,d);
+}
+
+function onStatusChange(sel,clsId,sid){
+  const d=load(clsId,sid);
+  d['_status']=sel.value;
+  save(clsId,sid,d);
+  sel.className='status-select '+(sel.value==='leave'?'s-leave':sel.value==='dropout'?'s-dropout':'s-normal');
+  const row=sel.closest('tr');
+  refreshRow(row,clsId,sid,d);
+}
+
+function onRemarkChange(input,clsId,sid){
+  const d=load(clsId,sid);
+  d['_remark']=input.value;
+  save(clsId,sid,d);
+  updateSummaryTab();
+}
+
+function onEnterKey(e,input){
+  if(e.key!=='Enter') return;
+  e.preventDefault();
+  // Find all inputs in same column (by data-key) across all rows in same panel
+  const key=input.dataset.key;
+  const panel=input.closest('[id^="panel_"]');
+  const allInputs=[...panel.querySelectorAll(`.si[data-key="${key}"]`)];
+  const idx=allInputs.indexOf(input);
+  if(idx>=0&&idx<allInputs.length-1){
+    allInputs[idx+1].focus();
+    allInputs[idx+1].select();
+  }
+}
+
+function onChange(input){
+  const row=input.closest('tr');
+  const cls=row.dataset.cls, sid=row.dataset.sid, key=input.dataset.key;
+  const max=parseFloat(input.dataset.max);
+  let val=parseFloat(input.value);
+  if(isNaN(val)) val='';
+  else val=Math.max(0,Math.min(val,max));
+  if(val!=='') input.value=val;
+  const d=load(cls,sid);
+  d[key]=val===''?'':val;
+  save(cls,sid,d);
+  refreshRow(row,cls,sid,d);
+}
+
+function refreshRow(row,cls,sid,d){
+  const{u1,u2,mid,u3,u4,fin,total,flagR,flagMS}=calcTotals(d);
+  const grade=getGrade(total,flagR,flagMS), gc=gradeClass(grade);
+  const tc=total>=60?'total-hl-hi':total>=40?'total-hl-mid':'total-hl-lo';
+  const midEl=row.querySelector('.mid-tot');
+  const finEl=row.querySelector('.fin-tot');
+  const totEl=row.querySelector('.total-val');
+  const gbEl=row.querySelector('.gb-cell');
+  const msBtn=row.querySelector('.ms-btn');
+  const u1El=row.querySelector('.u1-tot');
+  const u2El=row.querySelector('.u2-tot');
+  const u3El=row.querySelector('.u3-tot');
+  const u4El=row.querySelector('.u4-tot');
+  if(midEl) midEl.textContent=mid.toFixed(1);
+  if(finEl) finEl.textContent=fin.toFixed(1);
+  if(totEl){totEl.textContent=total.toFixed(1);totEl.className=`computed total-val ${tc}`;}
+  if(gbEl){gbEl.innerHTML=grade+gradeIcon(grade);gbEl.className=`gb ${gc} gb-cell`;}
+  if(msBtn) msBtn.classList.toggle('active',!!d['_ms']);
+  if(u1El) u1El.textContent=Math.min(u1,15).toFixed(1);
+  if(u2El) u2El.textContent=Math.min(u2,15).toFixed(1);
+  if(u3El) u3El.textContent=Math.min(u3,15).toFixed(1);
+  if(u4El) u4El.textContent=Math.min(u4,15).toFixed(1);
+  // อัปเดต row highlight
+  row.classList.remove('row-alert','row-grade0','row-gradeR','row-gradeMS');
+  if(grade==='0') row.classList.add('row-alert','row-grade0');
+  else if(grade==='ร') row.classList.add('row-alert','row-gradeR');
+  else if(grade==='มส') row.classList.add('row-alert','row-gradeMS');
+  const ci=CLASSES.findIndex(c=>c.id===cls);
+  if(ci>=0){const sb=document.getElementById(`stats_${ci}`);if(sb)sb.innerHTML=buildStats(CLASSES[ci]);}
+  updateSummaryTab();
+}
+
+function filterRows(input,ci){
+  const q=input.value.toLowerCase().trim();
+  document.getElementById(`panel_${ci}`).querySelectorAll('tbody tr').forEach(r=>{
+    const match=!q||(r.dataset.name||'').toLowerCase().includes(q)||(r.dataset.sid||'').includes(q);
+    r.classList.toggle('hidden-row',!match);
+  });
+}
+
+function saveAll(ci){
+  const cls=CLASSES[ci];
+  document.getElementById(`panel_${ci}`).querySelectorAll('tbody tr').forEach(row=>{
+    const sid=row.dataset.sid; if(!sid) return;
+    const d=load(cls.id,sid);
+    row.querySelectorAll('.si').forEach(inp=>{
+      const key=inp.dataset.key, max=parseFloat(inp.dataset.max);
+      let val=parseFloat(inp.value);
+      if(isNaN(val)) val=''; else val=Math.max(0,Math.min(val,max));
+      d[key]=val===''?'':val;
+    });
+    const rem=row.querySelector('.remark-input');
+    if(rem) d['_remark']=rem.value;
+    const sts=row.querySelector('.status-select');
+    if(sts) d['_status']=sts.value;
+    save(cls.id,sid,d);
+    refreshRow(row,cls.id,sid,d);
+  });
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+  updateSummaryTab();
+}
+
+function exportCSV(clsId,ci){
+  const cls=CLASSES[ci];
+  const hdr=['ที่','รหัส','ชื่อ-สกุล',...FIELDS.map(f=>f.label),'รวมกลางภาค','รวมปลายภาค','รวม','เกรด'];
+  const rows=[hdr.join(',')];
+  cls.students.forEach(s=>{
+    const d=load(clsId,s.id);
+    const{mid,fin,total,flagR,flagMS}=calcTotals(d);
+    const grade=getGrade(total,flagR,flagMS);
+    rows.push([s.no,s.id,`"${s.name}"`,...FIELDS.map(f=>d[f.key]||''),mid.toFixed(1),fin.toFixed(1),total.toFixed(1),grade].join(','));
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.join('\n')],{type:'text/csv;charset=utf-8'}));
+  a.download=`คะแนน_ม${clsId.replace('/','_')}.csv`;
+  a.click();
+}
+
+// ===== SUMMARY TAB =====
+function buildSummaryHTML(){
+  const allGrades=['4','3.5','3','2.5','2','1.5','1','0','ร','มส'];
+  const globalCnt={leave:0,dropout:0};
+  allGrades.forEach(g=>globalCnt[g]=0);
+
+  // Per-class data
+  const clsData=CLASSES.map(cls=>{
+    const cnt={leave:0,dropout:0};
+    allGrades.forEach(g=>cnt[g]=0);
+    const total=cls.students.length;
+    cls.students.forEach(s=>{
+      const d=load(cls.id,s.id);
+      const{total:sc,flagR,flagMS}=calcTotals(d);
+      const g=getGrade(sc,flagR,flagMS);
+      cnt[g]=(cnt[g]||0)+1;
+      if(d['_status']==='leave') cnt.leave++;
+      if(d['_status']==='dropout') cnt.dropout++;
+      allGrades.forEach(gr=>{ if(!globalCnt[gr]) globalCnt[gr]=0; });
+      globalCnt[g]=(globalCnt[g]||0)+1;
+      globalCnt.leave=(globalCnt.leave||0)+(d['_status']==='leave'?1:0);
+      globalCnt.dropout=(globalCnt.dropout||0)+(d['_status']==='dropout'?1:0);
+    });
+    const hi3up=['4','3.5','3'].reduce((a,g)=>a+(cnt[g]||0),0);
+    const lo=['0','ร','มส'].reduce((a,g)=>a+(cnt[g]||0),0);
+    return {cls,cnt,total,hi3up,lo};
+  });
+
+  const totalAll=CLASSES.reduce((a,c)=>a+c.students.length,0);
+  const total3up=['4','3.5','3'].reduce((a,g)=>a+(globalCnt[g]||0),0);
+  const totalLo=['0','ร','มส'].reduce((a,g)=>a+(globalCnt[g]||0),0);
+  const pct=(n,d)=>d>0?(n/d*100).toFixed(1)+'%':'0.0%';
+
+  // Grade color map
+  const gColor={'4':'#1d9e75','3.5':'#185fa5','3':'#378add','2.5':'#ba7517','2':'#ef9f27','1.5':'#d85a30','1':'#a32d2d','0':'#e74c3c','ร':'#e6b800','มส':'#e67e22'};
+  const gTxt={'4':'#fff','3.5':'#fff','3':'#fff','2.5':'#fff','2':'#fff','1.5':'#fff','1':'#fff','0':'#fff','ร':'#333','มส':'#fff'};
+
+  // Table 1: Summary by class
+  let clsRows=clsData.map(({cls,cnt,total,hi3up,lo})=>`
+    <tr>
+      <td class="cls-name">ม.${cls.id}<span style="color:var(--gray400);font-size:11px;font-weight:400"> · ห้อง ${cls.room}</span></td>
+      <td><strong>${total}</strong></td>
+      ${allGrades.map(g=>{
+        const n=cnt[g]||0;
+        const p=pct(n,total);
+        return `<td>${n>0?`<span style="font-weight:700">${n}</span><br><span style="font-size:10px;color:var(--gray400)">${p}</span>`:'<span style="color:var(--gray200)">—</span>'}</td>`;
+      }).join('')}
+      <td class="sum-hi"><strong>${hi3up}</strong><br><span style="font-size:10px">${pct(hi3up,total)}</span></td>
+      <td class="sum-lo"><strong>${lo}</strong><br><span style="font-size:10px">${pct(lo,total)}</span></td>
+      <td style="color:#e67e22;font-weight:700">${cnt.leave||0}</td>
+      <td style="color:#c62828;font-weight:700">${cnt.dropout||0}</td>
+    </tr>`).join('');
+
+  // Table 2: Per-grade bar chart (visual summary)
+  const gradeBarRows=allGrades.map(g=>{
+    const n=globalCnt[g]||0;
+    const p=totalAll>0?n/totalAll*100:0;
+    const barW=Math.max(p*3,n>0?4:0);
+    return `<tr>
+      <td style="text-align:right;padding-right:8px;font-weight:700;width:48px">
+        <span style="background:${gColor[g]};color:${gTxt[g]};padding:2px 7px;border-radius:5px;font-size:12px">${g}</span>
+      </td>
+      <td style="padding:4px 6px;width:260px">
+        <div style="background:#f0f0f0;border-radius:4px;height:18px;overflow:hidden">
+          <div style="width:${barW}%;background:${gColor[g]};height:100%;border-radius:4px;transition:width .5s;min-width:${n>0?'6px':'0'}"></div>
+        </div>
+      </td>
+      <td style="font-weight:700;width:36px">${n}</td>
+      <td style="color:var(--gray600);width:56px">${pct(n,totalAll)}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div style="display:grid;gap:20px">
+
+    <!-- Card: Summary table -->
+    <div class="summary-card">
+      <div class="summary-card-head">📊 ตารางสรุปผลการเรียน — ภาคเรียนที่ 1 ปีการศึกษา 2569 &nbsp;·&nbsp; ครูสิริณัฏฐ์ ลิมปิจำนงค์</div>
+      <div style="overflow-x:auto">
+      <table class="summary-table">
+        <thead><tr style="position:sticky;top:0;z-index:2">
+          <th style="text-align:left;min-width:140px">ห้องเรียน</th>
+          <th style="min-width:60px">นักเรียน<br>ทั้งหมด</th>
+          ${allGrades.map(g=>`<th style="background:${gColor[g]};color:${gTxt[g]};min-width:52px">${g}</th>`).join('')}
+          <th style="background:#e8f5e9;color:#0f6e56;min-width:72px">เกรด 3+<br>ร้อยละ</th>
+          <th style="background:#ffebee;color:#a32d2d;min-width:72px">0/ร/มส<br>ร้อยละ</th>
+          <th style="background:#fff3e0;color:#e67e22;min-width:64px">🟡 พัก<br>การเรียน</th>
+          <th style="background:#ffebee;color:#c62828;min-width:56px">🔴 ลาออก</th>
+        </tr></thead>
+        <tbody>
+          ${clsRows}
+          <tr style="background:#eef0f6;font-weight:700;border-top:2px solid var(--gray200)">
+            <td class="cls-name">รวมทุกห้อง</td>
+            <td><strong>${totalAll}</strong></td>
+            ${allGrades.map(g=>{
+              const n=globalCnt[g]||0;
+              return `<td>${n>0?`<strong>${n}</strong><br><span style="font-size:10px;color:var(--gray600)">${pct(n,totalAll)}</span>`:'—'}</td>`;
+            }).join('')}
+            <td class="sum-hi"><strong>${total3up}</strong><br><span style="font-size:10px">${pct(total3up,totalAll)}</span></td>
+            <td class="sum-lo"><strong>${totalLo}</strong><br><span style="font-size:10px">${pct(totalLo,totalAll)}</span></td>
+            <td style="color:#e67e22;font-weight:700">${globalCnt.leave||0}</td>
+            <td style="color:#c62828;font-weight:700">${globalCnt.dropout||0}</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- Card: Grade distribution visual -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="summary-card">
+        <div class="summary-card-head">📈 การกระจายเกรด (รวมทุกห้อง)</div>
+        <div style="padding:16px 20px">
+          <table style="width:100%;border:none">
+            <tbody>${gradeBarRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Card: Key stats -->
+      <div class="summary-card">
+        <div class="summary-card-head">📋 ตัวเลขสำคัญ</div>
+        <div style="padding:20px;display:grid;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#e8f5e9;border-radius:8px">
+            <span style="font-weight:600;color:#0f6e56">นักเรียนทั้งหมด</span>
+            <span style="font-size:20px;font-weight:800;color:#0f6e56">${totalAll} คน</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#e8f5e9;border-radius:8px">
+            <span style="font-weight:600;color:#0f6e56">เกรด 3 ขึ้นไป</span>
+            <span style="font-size:18px;font-weight:800;color:#0f6e56">${total3up} คน &nbsp;<span style="font-size:13px">(${pct(total3up,totalAll)})</span></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#ffebee;border-radius:8px">
+            <span style="font-weight:600;color:#a32d2d">ติด 0 / ร / มส</span>
+            <span style="font-size:18px;font-weight:800;color:#a32d2d">${totalLo} คน &nbsp;<span style="font-size:13px">(${pct(totalLo,totalAll)})</span></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff3e0;border-radius:8px">
+            <span style="font-weight:600;color:#e67e22">พักการเรียน</span>
+            <span style="font-size:18px;font-weight:800;color:#e67e22">${globalCnt.leave||0} คน</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#ffebee;border-radius:8px">
+            <span style="font-weight:600;color:#c62828">ลาออก</span>
+            <span style="font-size:18px;font-weight:800;color:#c62828">${globalCnt.dropout||0} คน</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>`;
+}
+
+function updateSummaryTab(){
+  const sp=document.getElementById('summary-panel');
+  if(sp) sp.innerHTML=buildSummaryHTML();
+}
+
+// ================================================================
+// AUTO-RECEIVE SCORE FROM QUIZ (URL parameter)
+// ================================================================
+(function receiveScore(){
+  const p = new URLSearchParams(window.location.search);
+  if(!p.has('score') || !p.has('class') || !p.has('num')) return;
+
+  const cls    = p.get('class');   // เช่น "ม.6/1"
+  const num    = parseInt(p.get('num'));
+  const scaled = parseFloat(p.get('scaled'));
+  const name   = p.get('name');
+  const pct    = p.get('pct');
+
+  // แปลง cls → id ที่ตรงกับ CLASSES (ตัด "ม." ออก)
+  const clsId  = cls.replace(/^ม\./, '');
+
+  // หา student ใน CLASSES
+  let targetCls = CLASSES.find(c => c.id === clsId);
+  let targetStu = targetCls ? targetCls.students.find(s => s.no === num) : null;
+
+  if(!targetCls || !targetStu){
+    // ลองหาด้วยชื่อ
+    for(const c of CLASSES){
+      const s = c.students.find(s => s.name === name);
+      if(s){ targetCls = c; targetStu = s; break; }
+    }
+  }
+
+  if(!targetCls || !targetStu){
+    showAutoToast('⚠ ไม่พบนักเรียน: ' + name + ' (' + cls + ' เลขที่ ' + num + ')', '#e74c3c');
+    cleanUrl();
+    return;
+  }
+
+  // โหลดข้อมูลเดิมแล้วอัปเดต u1_exam
+  const d = load(targetCls.id, targetStu.id);
+  d['u1_exam'] = scaled;
+  save(targetCls.id, targetStu.id, d);
+
+  showAutoToast('✅ บันทึกคะแนน ' + targetStu.name + ' — สอบท้ายหน่วย 1: ' + scaled + '/2.5 (' + pct + '%)', '#0f6e56');
+  cleanUrl();
+
+  function cleanUrl(){
+    // ลบ parameter ออกจาก URL โดยไม่ reload
+    const url = window.location.pathname;
+    window.history.replaceState({}, '', url);
+  }
+})();
+
+function showAutoToast(msg, color){
+  let t = document.getElementById('auto-toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'auto-toast';
+    t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:14px 24px;border-radius:10px;font-weight:700;font-size:14px;font-family:Sarabun,sans-serif;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.25);max-width:90vw;text-align:center;transition:opacity .4s;color:#fff';
+    document.body.appendChild(t);
+  }
+  t.style.background = color || '#185fa5';
+  t.style.opacity = '1';
+  t.textContent = msg;
+  setTimeout(()=>{ t.style.opacity='0'; }, 5000);
+}
+
+// Build tabs & panels
+const tabsEl=document.getElementById('tabs'), panelsEl=document.getElementById('panels');
+CLASSES.forEach((cls,ci)=>{
+  const tab=document.createElement('div');
+  tab.className='tab'+(ci===0?' active':'');
+  tab.textContent=`ม.${cls.id}`;
+  tab.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.main').forEach(p=>p.classList.remove('active'));
+    document.getElementById(`panel_${ci}`).classList.add('active');
+  };
+  tabsEl.appendChild(tab);
+  const panel=document.createElement('div');
+  panel.className='main'+(ci===0?' active':'');
+  panel.id=`panel_${ci}`;
+  panel.innerHTML=buildPanel(cls,ci);
+  panelsEl.appendChild(panel);
+});
+
+// Summary tab
+const sumTab=document.createElement('div');
+sumTab.className='tab';
+sumTab.innerHTML='📊 สรุปผล';
+sumTab.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  sumTab.classList.add('active');
+  document.querySelectorAll('.main').forEach(p=>p.classList.remove('active'));
+  document.getElementById('summary-panel').classList.add('active');
+  updateSummaryTab();
+};
+tabsEl.appendChild(sumTab);
+
+const summaryPanel=document.createElement('div');
+summaryPanel.id='summary-panel';
+summaryPanel.className='main';
+summaryPanel.style.cssText='padding:20px 24px 32px';
+panelsEl.appendChild(summaryPanel);
+updateSummaryTab();
+</script>
+</body>
+</html>
