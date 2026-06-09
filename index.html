@@ -560,31 +560,6 @@ tr.row-gradeMS td.col-name::before { content: '🟠 '; font-size: 11px; }
 .btn-pdf { padding: 6px 14px; background: #c0392b; color: #fff; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 12px; transition: opacity .15s; }
 .btn-pdf:hover { opacity: .85; }
 
-/* ===== UNLOCK BUTTON ===== */
-.btn-unlock {
-  display: inline-block; padding: 2px 7px; margin-left: 5px;
-  font-size: 10px; font-weight: 700; cursor: pointer;
-  background: #fff3e0; border: 1px solid #ffcc80;
-  border-radius: 4px; color: #b45309;
-  vertical-align: middle; line-height: 1.5;
-  transition: all .15s; white-space: nowrap;
-  font-family: 'Sarabun', sans-serif;
-}
-.btn-unlock:hover { background: #f59e0b; color: #fff; border-color: #f59e0b; }
-.btn-unlock.has-score { background: #dcfce7; border-color: #86efac; color: #15803d; }
-.btn-unlock.has-score:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
-
-/* ===== SCORE EDIT LOG (หมายเหตุใต้ตาราง) ===== */
-.score-edit-log {
-  padding: 10px 18px;
-  border-top: 1px solid var(--gray200);
-  background: #fffbeb;
-  font-size: 11px;
-  color: #92400e;
-}
-.score-edit-log-title { font-weight: 700; margin-bottom: 4px; color: #78350f; }
-.score-edit-log-item { margin-bottom: 2px; line-height: 1.6; }
-
 /* ===== PRINT CSS ===== */
 .print-header { display: none; font-family: 'Noto Serif Thai', serif; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #1a1d2e; }
 
@@ -594,7 +569,7 @@ tr.row-gradeMS td.col-name::before { content: '🟠 '; font-size: 11px; }
   .header, .legend, .tabs, .stats-bar, .table-topbar { display: none !important; }
   .main { display: none !important; padding: 0 !important; }
   .main.print-target { display: block !important; }
-  #login-screen, #confirm-modal, .toast, #auto-toast, .score-edit-log { display: none !important; }
+  #login-screen, #confirm-modal, .toast, #auto-toast { display: none !important; }
   .table-card { border: none !important; box-shadow: none !important; }
   .table-scroll { overflow: visible !important; }
   table { min-width: unset !important; width: 100% !important; font-size: 8.5px !important; }
@@ -649,7 +624,7 @@ tr.row-gradeMS td.col-name::before { content: '🟠 '; font-size: 11px; }
 <div id="login-screen">
   <div class="login-box">
     <div class="login-title">ระบบเช็กการส่งงาน</div>
-    <div class="login-sub">วิชาภาษาไทย ม.6 — โรงเรียนแก่นนครวิทยาลัย</div>
+    <div class="login-sub">วิชาภาษาไทย ม.6 — โรงเรียนแกนนครวิทยาลัย</div>
     <div class="login-field">
       <label>ชื่อผู้ใช้</label>
       <input type="text" id="login-user" placeholder="username" autocomplete="off">
@@ -717,7 +692,7 @@ const CLASSES = [
     {no:1,id:'45129',name:'นาย โฆษิตฉพัฒน์ ประจุดธะสี'},
     {no:2,id:'45510',name:'นาย ธนกฤต ผงทอง'},
     {no:3,id:'45173',name:'นาย นพเกล้า ปรินทร์ทอง'},
-    {no:4,id:'45134',name:'นาย ปฏิภาณ แจ้งต่าย'},
+    {no:4,id:'45134',name:'นาย ปฏิภาณ แจ้งตาย'},
     {no:5,id:'48555',name:'นาย ปรกฉัตร ผาวงษ์หา'},
     {no:6,id:'45135',name:'นาย เปี่ยมบุญ ชวดไชย'},
     {no:7,id:'48556',name:'นาย ภูริธาดา ภูริวัฒนสุข'},
@@ -1053,7 +1028,6 @@ function buildTable(cls){
        +'<th rowspan="2" class="meta" style="min-width:70px">เกรด</th>'
        +'<th rowspan="2" class="meta" style="min-width:100px">สถานะ</th>'
        +'<th rowspan="2" class="meta" style="min-width:130px">หมายเหตุ</th>'
-       +'<th rowspan="2" class="meta" style="min-width:90px">แบบทดสอบ</th>'
        +'</tr>';
 
   const unitTotLabel={'u1':'รวม /15','u2':'รวม /15','u3':'รวม /15','u4':'รวม /15'};
@@ -1101,7 +1075,7 @@ function buildTable(cls){
       if(f.sepR && f.g==='u3') rows+=`<td class="unit-tot u3"><span class="computed u3-tot" style="color:#3c3489">${Math.min(u3,15).toFixed(1)}</span></td>`;
       if(f.sepR && f.g==='u4') rows+=`<td class="unit-tot u4 sep-r"><span class="computed u4-tot" style="color:#993c1d">${Math.min(u4,15).toFixed(1)}</span></td>`;
     });
-    rows+=`<td class="total-cell"><span class="computed total-val ${tc}">${total.toFixed(1)}</span></td>`;
+    rows+=`<td class="total-cell"><span class="computed total-val ${tc}">${Math.min(Math.round(total),100)}</span></td>`;
     rows+=`<td style="white-space:nowrap"><span class="gb ${gc} gb-cell">${grade}${gradeIcon(grade)}</span> <span class="ms-btn ${msActive}" onclick="toggleMS('${cls.id}','${s.id}',this)" title="กำหนด มส">มส</span></td>`;
     rows+=`<td class="status-cell"><select class="status-select ${statusClass}" onchange="onStatusChange(this,'${cls.id}','${s.id}')">
       <option value="" ${status===''?'selected':''}>ปกติ</option>
@@ -1109,15 +1083,6 @@ function buildTable(cls){
       <option value="dropout" ${status==='dropout'?'selected':''}>🔴 ลาออก</option>
     </select></td>`;
     rows+=`<td class="remark-cell"><input type="text" class="remark-input" placeholder="หมายเหตุ..." value="${remark.replace(/"/g,'&quot;')}" onchange="onRemarkChange(this,'${cls.id}','${s.id}')"></td>`;
-    // ปุ่มปลดล็อกแบบทดสอบ
-    const hasExamScore = d['u1_exam'] !== undefined && d['u1_exam'] !== '' && d['u1_exam'] !== null;
-    rows+=`<td style="text-align:center;white-space:nowrap">
-      ${hasExamScore
-        ? `<span style="font-size:11px;color:#15803d;font-weight:700">✔ ${d['u1_exam']}/2.5</span>
-           <button class="btn-unlock has-score" onclick="unlockQuiz('${cls.id}','${s.id}','${s.name.replace(/'/g,"\\'")}',this)" title="คลิกเพื่อยกเลิกคะแนนและให้นักเรียนทำใหม่">🔓 ยกเลิก</button>`
-        : `<span class="btn-unlock" style="cursor:default;opacity:.5">— ยังไม่ส่ง</span>`
-      }
-    </td>`;
     rows+='</tr>';
   });
 
@@ -1137,83 +1102,7 @@ function buildPanel(cls,ci){
     </div>
     <div class="table-scroll"><table>${buildTable(cls)}</table></div>
     <div class="stats-bar" id="stats_${ci}">${buildStats(cls)}</div>
-    <div class="score-edit-log" id="editlog_${ci}">${buildEditLog(cls)}</div>
   </div>`;
-}
-
-// ================================================================
-// UNLOCK QUIZ — ยกเลิกคำตอบและส่งนักเรียนกลับไปทำแบบทดสอบ
-// ================================================================
-function unlockQuiz(clsId, sid, name, btn){
-  if(!confirm(`ยืนยันการยกเลิกคะแนนแบบทดสอบท้ายหน่วย 1 ของ\n"${name}" ?\n\nนักเรียนจะสามารถทำแบบทดสอบใหม่ได้`)) return;
-
-  const d = load(clsId, sid);
-  const oldScore = d['u1_exam'];
-
-  // บันทึก audit log ก่อนลบ
-  const logKey = `editlog_${clsId}_${sid}`;
-  let logs = [];
-  try { logs = JSON.parse(localStorage.getItem(logKey) || '[]'); } catch(e){}
-  const now = new Date();
-  const ts = now.toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'})
-           + ' ' + now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-  logs.push({ ts, name, field:'สอบท้ายหน่วย 1 (u1_exam)', oldVal: oldScore, newVal: '(ยกเลิก/ให้ทำใหม่)' });
-  localStorage.setItem(logKey, JSON.stringify(logs));
-
-  // ลบคะแนน u1_exam ออก
-  delete d['u1_exam'];
-  save(clsId, sid, d);
-
-  // อัปเดต UI ของแถวนั้น
-  const row = btn.closest('tr');
-  refreshRow(row, clsId, sid, d);
-
-  // เปลี่ยน cell ปลดล็อก
-  const cell = btn.closest('td');
-  cell.innerHTML = `<span class="btn-unlock" style="cursor:default;opacity:.5">— ยังไม่ส่ง</span>`;
-
-  // อัปเดต edit log ใต้ตาราง
-  const ci = CLASSES.findIndex(c=>c.id===clsId);
-  if(ci>=0){
-    const logEl = document.getElementById(`editlog_${ci}`);
-    if(logEl) logEl.innerHTML = buildEditLog(CLASSES[ci]);
-  }
-
-  // ส่งสัญญาณปลดล็อกผ่าน localStorage → quiz.html ที่นักเรียนเปิดอยู่จะรับและรีเซ็ตทันที
-  const stu = CLASSES.find(c=>c.id===clsId)?.students.find(s=>s.id===sid);
-  const unlockPayload = JSON.stringify({
-    cls:  'ม.' + clsId,
-    num:  String(stu?.no || ''),
-    sid:  sid,
-    ts:   Date.now()
-  });
-  localStorage.setItem('quiz_unlock', unlockPayload);
-  // ลบ signal ออกหลัง 15 วิ เพื่อไม่ให้ค้าง
-  setTimeout(()=>{ localStorage.removeItem('quiz_unlock'); }, 15000);
-
-  showAutoToast('🔓 ยกเลิกคะแนน ' + name + ' (' + oldScore + '/2.5) เรียบร้อย — หน้าแบบทดสอบจะรีเซ็ตอัตโนมัติ', '#15803d');
-  updateSummaryTab();
-}
-
-// ================================================================
-// BUILD EDIT LOG — สร้าง HTML หมายเหตุการแก้ไขคะแนนใต้ตาราง
-// ================================================================
-function buildEditLog(cls){
-  const allLogs = [];
-  cls.students.forEach(s=>{
-    const logKey = `editlog_${cls.id}_${s.id}`;
-    try {
-      const logs = JSON.parse(localStorage.getItem(logKey) || '[]');
-      logs.forEach(l=>allLogs.push({...l, stuName: s.name, stuNo: s.no}));
-    } catch(e){}
-  });
-  if(!allLogs.length) return '';
-  // เรียงล่าสุดก่อน
-  allLogs.sort((a,b)=>b.ts.localeCompare(a.ts));
-  const items = allLogs.map(l=>
-    `<div class="score-edit-log-item">📝 [${l.ts}] เลขที่ ${l.stuNo} ${l.stuName} — ${l.field}: <strong>${l.oldVal}</strong> → <em>${l.newVal}</em></div>`
-  ).join('');
-  return `<div class="score-edit-log-title">📋 ประวัติการแก้ไขคะแนน (${allLogs.length} รายการ)</div>${items}`;
 }
 
 function printPDF(ci){
@@ -1326,7 +1215,7 @@ function refreshRow(row,cls,sid,d){
   const u4El=row.querySelector('.u4-tot');
   if(midEl) midEl.textContent=mid.toFixed(1);
   if(finEl) finEl.textContent=fin.toFixed(1);
-  if(totEl){totEl.textContent=total.toFixed(1);totEl.className=`computed total-val ${tc}`;}
+  if(totEl){totEl.textContent=Math.min(Math.round(total),100);totEl.className=`computed total-val ${tc}`;}
   if(gbEl){gbEl.innerHTML=grade+gradeIcon(grade);gbEl.className=`gb ${gc} gb-cell`;}
   if(msBtn) msBtn.classList.toggle('active',!!d['_ms']);
   if(u1El) u1El.textContent=Math.min(u1,15).toFixed(1);
@@ -1383,7 +1272,7 @@ function exportCSV(clsId,ci){
     const d=load(clsId,s.id);
     const{mid,fin,total,flagR,flagMS}=calcTotals(d);
     const grade=getGrade(total,flagR,flagMS);
-    rows.push([s.no,s.id,`"${s.name}"`,...FIELDS.map(f=>d[f.key]||''),mid.toFixed(1),fin.toFixed(1),total.toFixed(1),grade].join(','));
+    rows.push([s.no,s.id,`"${s.name}"`,...FIELDS.map(f=>d[f.key]||''),mid.toFixed(1),fin.toFixed(1),Math.min(Math.round(total),100),grade].join(','));
   });
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.join('\n')],{type:'text/csv;charset=utf-8'}));
@@ -1587,27 +1476,6 @@ function updateSummaryTab(){
 
   showAutoToast('✅ บันทึกคะแนน ' + targetStu.name + ' — สอบท้ายหน่วย 1: ' + scaled + '/2.5 (' + pct + '%)', '#0f6e56');
   cleanUrl();
-
-  // รีเฟรช UI ของ row และ unlock cell หลัง DOM พร้อม
-  setTimeout(()=>{
-    const row = document.querySelector(`tr[data-cls="${targetCls.id}"][data-sid="${targetStu.id}"]`);
-    if(row){
-      refreshRow(row, targetCls.id, targetStu.id, d);
-      // อัปเดต cell แบบทดสอบ
-      const cells = row.querySelectorAll('td');
-      const lastCell = cells[cells.length-1];
-      if(lastCell){
-        lastCell.innerHTML = `<span style="font-size:11px;color:#15803d;font-weight:700">✔ ${scaled}/2.5</span>
-          <button class="btn-unlock has-score" onclick="unlockQuiz('${targetCls.id}','${targetStu.id}','${targetStu.name.replace(/'/g,"\\'")}',this)" title="คลิกเพื่อยกเลิกคะแนนและให้นักเรียนทำใหม่">🔓 ยกเลิก</button>`;
-      }
-      // อัปเดต edit log
-      const ci = CLASSES.findIndex(c=>c.id===targetCls.id);
-      if(ci>=0){
-        const logEl = document.getElementById(`editlog_${ci}`);
-        if(logEl) logEl.innerHTML = buildEditLog(CLASSES[ci]);
-      }
-    }
-  }, 300);
 
   function cleanUrl(){
     // ลบ parameter ออกจาก URL โดยไม่ reload
