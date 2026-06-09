@@ -556,6 +556,17 @@ tr.row-gradeR td.col-name::before { content: '🟡 '; font-size: 11px; }
 tr.row-gradeMS td.col-name { background: #ffeacc !important; font-weight: 700; }
 tr.row-gradeMS td.col-name::before { content: '🟠 '; font-size: 11px; }
 
+/* ===== DROPOUT ROW ===== */
+tr.row-dropout td { opacity: 0.45; }
+tr.row-dropout td { text-decoration: line-through; text-decoration-color: #c62828; text-decoration-thickness: 2px; }
+tr.row-dropout td.status-cell, tr.row-dropout td.remark-cell { text-decoration: none; opacity: 1; }
+tr.row-dropout td.sticky-no, tr.row-dropout td.sticky-id, tr.row-dropout td.sticky-name { background: #fde8e8 !important; }
+tr.row-dropout:nth-child(even) td.sticky-no,
+tr.row-dropout:nth-child(even) td.sticky-id,
+tr.row-dropout:nth-child(even) td.sticky-name { background: #fde8e8 !important; }
+tr.row-dropout:hover td { opacity: 0.65; }
+tr.row-dropout td.col-name::before { content: '✖ ลาออก — '; font-size: 11px; color: #c62828; font-weight: 700; }
+
 /* ===== PDF BUTTON ===== */
 .btn-pdf { padding: 6px 14px; background: #c0392b; color: #fff; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: 12px; transition: opacity .15s; }
 .btn-pdf:hover { opacity: .85; }
@@ -1059,7 +1070,8 @@ function buildTable(cls){
     const statusClass=status==='leave'?'s-leave':status==='dropout'?'s-dropout':'s-normal';
     // ไฮไลท์แถวตามเกรด
     const alertClass = grade==='0'?'row-alert row-grade0':grade==='ร'?'row-alert row-gradeR':grade==='มส'?'row-alert row-gradeMS':'';
-    rows+=`<tr data-cls="${cls.id}" data-sid="${s.id}" data-name="${s.name}" class="${alertClass}">`;
+    const dropoutClass = status==='dropout'?' row-dropout':'';
+    rows+=`<tr data-cls="${cls.id}" data-sid="${s.id}" data-name="${s.name}" class="${alertClass}${dropoutClass}">`;
     rows+=`<td class="col-no sticky-no" style="left:0">${s.no}</td>`
          +`<td class="col-id sticky-id" style="left:36px">${s.id}</td>`
          +`<td class="col-name sticky-name" style="left:98px">${s.name}</td>`;
@@ -1223,10 +1235,12 @@ function refreshRow(row,cls,sid,d){
   if(u3El) u3El.textContent=Math.min(u3,15).toFixed(1);
   if(u4El) u4El.textContent=Math.min(u4,15).toFixed(1);
   // อัปเดต row highlight
-  row.classList.remove('row-alert','row-grade0','row-gradeR','row-gradeMS');
+  row.classList.remove('row-alert','row-grade0','row-gradeR','row-gradeMS','row-dropout');
   if(grade==='0') row.classList.add('row-alert','row-grade0');
   else if(grade==='ร') row.classList.add('row-alert','row-gradeR');
   else if(grade==='มส') row.classList.add('row-alert','row-gradeMS');
+  const rowStatus=d['_status']||'';
+  if(rowStatus==='dropout') row.classList.add('row-dropout');
   const ci=CLASSES.findIndex(c=>c.id===cls);
   if(ci>=0){const sb=document.getElementById(`stats_${ci}`);if(sb)sb.innerHTML=buildStats(CLASSES[ci]);}
   updateSummaryTab();
