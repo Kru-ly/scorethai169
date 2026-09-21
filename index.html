@@ -962,7 +962,7 @@ const COL = {
   mid_mc_raw:'um', mid_essay:'um',
   u3_book_exam:'u3', u3_present:'u3', u3_exam:'u3',
   u4_worksheet:'u4', u4_exam:'u4', u4_reading2:'u4', u4_sign:'u4',
-  fin_mc_raw:'uf', fin_essay:'uf',
+  fin_mc_raw:'uf',
 };
 
 const FIELDS = [
@@ -974,15 +974,14 @@ const FIELDS = [
   {key:'u2_exam',    label:'สอบท้ายหน่วย 2',    max:5,   g:'u2', sepR:true},
   {key:'mid_mc_raw', label:'ปรนัย÷2=15',        max:30,  g:'um', midRaw:true},
   {key:'mid_essay',  label:'อัตนัย',             max:5,   g:'um', afterMidTotal:true, sepR:true},
-  {key:'u3_book_exam',label:'สอบอ่านนอกเวลา',   max:10,  g:'u3'},
+  {key:'u3_book_exam',label:'นับลายเซ็นในสมุด',   max:10,  g:'u3'},
   {key:'u3_present', label:'ส่งข้อสอบนำเสนอ',   max:3,   g:'u3'},
   {key:'u3_exam',    label:'สอบท้ายหน่วย 3',    max:2,   g:'u3', sepR:true},
-  {key:'u4_worksheet',label:'ใบงานระดับภาษา',   max:2,   g:'u4'},
+  {key:'u4_worksheet',label:'วันสุนทรภู่',   max:2,   g:'u4'},
   {key:'u4_exam',    label:'สอบท้ายหน่วย 4',    max:3,   g:'u4'},
   {key:'u4_reading2',label:'บันทึกรักอ่าน ครั้ง 2', max:5, g:'u4', requiredR:true},
-  {key:'u4_sign',    label:'นับลายเซ็น',         max:5,   g:'u4', sepR:true},
-  {key:'fin_mc_raw', label:'ปรนัย÷3=10',        max:30,  g:'uf', finRaw:true},
-  {key:'fin_essay',  label:'อัตนัย',             max:10,  g:'uf', afterFinTotal:true},
+  {key:'u4_sign',    label:'การมีส่วนร่วม',         max:5,   g:'u4', sepR:true},
+  {key:'fin_mc_raw', label:'ปรนัย÷2=20',        max:40,  g:'uf', finRaw:true, afterFinTotal:true},
 ];
 
 // Grade groups config for header
@@ -992,7 +991,7 @@ const GROUP_HEADERS = [
   {label:'สอบกลางภาค (20)', g:'um', span:3},
   {label:'หน่วย 3 — การอ่านวิเคราะห์ (15)', g:'u3', span:3},
   {label:'หน่วย 4 — การใช้ภาษา (15)', g:'u4', span:4},
-  {label:'สอบปลายภาค (20)', g:'uf', span:3},
+  {label:'สอบปลายภาค (20)', g:'uf', span:2},
 ];
 
 function getGrade(score, flagR, flagMS){
@@ -1025,8 +1024,7 @@ function calcTotals(d){
   const mid=midMC+Math.min(v('mid_essay'),5);
   const u3=v('u3_book_exam')+v('u3_present')+v('u3_exam');
   const u4=v('u4_worksheet')+v('u4_exam')+v('u4_reading2')+v('u4_sign');
-  const finMC=Math.min(v('fin_mc_raw')/3,10);
-  const fin=finMC+Math.min(v('fin_essay'),10);
+  const fin=Math.min(v('fin_mc_raw')/2,20);
   const total=Math.min(u1,15)+Math.min(u2,15)+Math.min(mid,20)+Math.min(u3,15)+Math.min(u4,15)+Math.min(fin,20);
   const miss=k=>d[k]===''||d[k]===undefined||d[k]===null;
   const flagR=miss('u1_recite')||miss('u2_reading1')||miss('u4_reading2');
@@ -1092,14 +1090,14 @@ function buildTable(cls){
       const val=d[f.key]!==undefined?d[f.key]:'';
       const sep=f.sepR?' sep-r':'';
       const isLocked=status==='dropout'||status==='leave';
-      rows+=`<td class="${f.g}${sep}"><input type="number" class="si ${f.g}${f.midRaw||f.finRaw?' si-raw':''}" data-key="${f.key}" data-max="${f.max}" data-cls="${cls.id}" data-sid="${s.id}" value="${val}" min="0" max="${f.max}" step="0.5" onchange="onChange(this)" onkeydown="onEnterKey(event,this)"${isLocked?' disabled':''} ></td>`;
-      if(f.afterMidTotal) rows+=`<td class="um sep-r"><span class="computed mid-tot" style="color:#854f0b">${mid.toFixed(1)}</span></td>`;
-      if(f.afterFinTotal) rows+=`<td class="uf"><span class="computed fin-tot" style="color:#3b6d11">${fin.toFixed(1)}</span></td>`;
+      rows+=`<td class="${f.g}${sep}"><input type="number" class="si ${f.g}${f.midRaw||f.finRaw?' si-raw':''}" data-key="${f.key}" data-max="${f.max}" data-cls="${cls.id}" data-sid="${s.id}" value="${val}" min="0" max="${f.max}" step="1" onchange="onChange(this)" onkeydown="onEnterKey(event,this)"${isLocked?' disabled':''} ></td>`;
+      if(f.afterMidTotal) rows+=`<td class="um sep-r"><span class="computed mid-tot" style="color:#854f0b">${Math.round(mid)}</span></td>`;
+      if(f.afterFinTotal) rows+=`<td class="uf"><span class="computed fin-tot" style="color:#3b6d11">${Math.round(fin)}</span></td>`;
       // คอลัมน์รวมหน่วย
-      if(f.sepR && f.g==='u1') rows+=`<td class="unit-tot u1"><span class="computed u1-tot" style="color:#0f6e56">${Math.min(u1,15).toFixed(1)}</span></td>`;
-      if(f.sepR && f.g==='u2') rows+=`<td class="unit-tot u2"><span class="computed u2-tot" style="color:#185fa5">${Math.min(u2,15).toFixed(1)}</span></td>`;
-      if(f.sepR && f.g==='u3') rows+=`<td class="unit-tot u3"><span class="computed u3-tot" style="color:#3c3489">${Math.min(u3,15).toFixed(1)}</span></td>`;
-      if(f.sepR && f.g==='u4') rows+=`<td class="unit-tot u4 sep-r"><span class="computed u4-tot" style="color:#993c1d">${Math.min(u4,15).toFixed(1)}</span></td>`;
+      if(f.sepR && f.g==='u1') rows+=`<td class="unit-tot u1"><span class="computed u1-tot" style="color:#0f6e56">${Math.round(Math.min(u1,15))}</span></td>`;
+      if(f.sepR && f.g==='u2') rows+=`<td class="unit-tot u2"><span class="computed u2-tot" style="color:#185fa5">${Math.round(Math.min(u2,15))}</span></td>`;
+      if(f.sepR && f.g==='u3') rows+=`<td class="unit-tot u3"><span class="computed u3-tot" style="color:#3c3489">${Math.round(Math.min(u3,15))}</span></td>`;
+      if(f.sepR && f.g==='u4') rows+=`<td class="unit-tot u4 sep-r"><span class="computed u4-tot" style="color:#993c1d">${Math.round(Math.min(u4,15))}</span></td>`;
     });
     rows+=`<td class="total-cell"><span class="computed total-val ${tc}">${Math.min(Math.round(total),100)}</span></td>`;
     rows+=`<td style="white-space:nowrap"><span class="gb ${gc} gb-cell">${grade}${gradeIcon(grade)}</span> <span class="ms-btn ${msActive}" onclick="toggleMS('${cls.id}','${s.id}',this)" title="กำหนด มส">มส</span></td>`;
@@ -1218,7 +1216,7 @@ function onChange(input){
   const max=parseFloat(input.dataset.max);
   let val=parseFloat(input.value);
   if(isNaN(val)) val='';
-  else val=Math.max(0,Math.min(val,max));
+  else val=Math.max(0,Math.min(Math.round(val),max));
   if(val!=='') input.value=val;
   const d=load(cls,sid);
   d[key]=val===''?'':val;
@@ -1239,15 +1237,15 @@ function refreshRow(row,cls,sid,d){
   const u2El=row.querySelector('.u2-tot');
   const u3El=row.querySelector('.u3-tot');
   const u4El=row.querySelector('.u4-tot');
-  if(midEl) midEl.textContent=mid.toFixed(1);
-  if(finEl) finEl.textContent=fin.toFixed(1);
+  if(midEl) midEl.textContent=Math.round(mid);
+  if(finEl) finEl.textContent=Math.round(fin);
   if(totEl){totEl.textContent=Math.min(Math.round(total),100);totEl.className=`computed total-val ${tc}`;}
   if(gbEl){gbEl.innerHTML=grade+gradeIcon(grade);gbEl.className=`gb ${gc} gb-cell`;}
   if(msBtn) msBtn.classList.toggle('active',!!d['_ms']);
-  if(u1El) u1El.textContent=Math.min(u1,15).toFixed(1);
-  if(u2El) u2El.textContent=Math.min(u2,15).toFixed(1);
-  if(u3El) u3El.textContent=Math.min(u3,15).toFixed(1);
-  if(u4El) u4El.textContent=Math.min(u4,15).toFixed(1);
+  if(u1El) u1El.textContent=Math.round(Math.min(u1,15));
+  if(u2El) u2El.textContent=Math.round(Math.min(u2,15));
+  if(u3El) u3El.textContent=Math.round(Math.min(u3,15));
+  if(u4El) u4El.textContent=Math.round(Math.min(u4,15));
   // อัปเดต row highlight
   row.classList.remove('row-alert','row-grade0','row-gradeR','row-gradeMS','row-dropout','row-leave');
   if(grade==='0') row.classList.add('row-alert','row-grade0');
@@ -1279,7 +1277,7 @@ function saveAll(ci){
     row.querySelectorAll('.si').forEach(inp=>{
       const key=inp.dataset.key, max=parseFloat(inp.dataset.max);
       let val=parseFloat(inp.value);
-      if(isNaN(val)) val=''; else val=Math.max(0,Math.min(val,max));
+      if(isNaN(val)) val=''; else val=Math.max(0,Math.min(Math.round(val),max));
       d[key]=val===''?'':val;
     });
     const rem=row.querySelector('.remark-input');
@@ -1303,7 +1301,7 @@ function exportCSV(clsId,ci){
     const d=load(clsId,s.id);
     const{mid,fin,total,flagR,flagMS}=calcTotals(d);
     const grade=getGrade(total,flagR,flagMS);
-    rows.push([s.no,s.id,`"${s.name}"`,...FIELDS.map(f=>d[f.key]||''),mid.toFixed(1),fin.toFixed(1),Math.min(Math.round(total),100),grade].join(','));
+    rows.push([s.no,s.id,`"${s.name}"`,...FIELDS.map(f=>d[f.key]||''),Math.round(mid),Math.round(fin),Math.min(Math.round(total),100),grade].join(','));
   });
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.join('\n')],{type:'text/csv;charset=utf-8'}));
